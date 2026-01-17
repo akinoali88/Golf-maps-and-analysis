@@ -87,7 +87,7 @@ def enrich_golf_course_addresses(
 
     # Iterate over the original DataFrame using the mask
     for count, (index, row) in enumerate(df.iterrows(), 1):
-        course_name = row.get('Golf Course Name')
+        course_name = row.get('Golf Course')
         if not course_name:
             continue
 

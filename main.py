@@ -23,7 +23,7 @@ golf_courses = load_source_data(file_name='golf rounds.xlsx',
                                 excel_params={
                                     'sheet_name': 'golf courses',
                                     'skiprows': 3,
-                                    'usecols': 'B:H',
+                                    'usecols': 'B:K',
                                             })
 
 # Clean Golf Course Data
