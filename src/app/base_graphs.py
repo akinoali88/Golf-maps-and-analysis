@@ -2,23 +2,30 @@
 Base graph functions for 
 '''
 
-# import pandas as pd
-# from plotly.graph_objects import Figure
+import pandas as pd
+import plotly.express as px
+
+def map_golf_courses(df: pd.DataFrame):
+
+    '''
+    Docstring for map_golf_courses
+    
+    :param df: Description
+    :type df: pd.DataFrame
+    :return: Description
+    :rtype: Figure
+    '''
+
+    fig = px.scatter_map(df,
+                         lat='Latitude',
+                         lon='Longitude',
+                         hover_name='Golf Course',
+                         #size = 'tbc'
+                            )
+
+    fig.update_layout(scattermode='group')
 
 
-# def daily_feed_vol_by_age(df: pd.DataFrame) -> Figure:
-#     '''
-#     Generate a plot...
+    fig.show()
 
-#     Args:
-#         df (pd.DataFrame): A DataFrame containing the following columns:
-#             - a
-#             - b
-
-#     Returns:
-#         Figure: A Plotly Figure object representing the scatter plot with trendlines.
-#     '''
-
-#     #fig = # run some logic
-
-#     return
+    return
