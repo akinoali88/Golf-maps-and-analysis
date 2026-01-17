@@ -1,5 +1,5 @@
 '''
-Render the individual feeds page tab for the Child Feeding Progress Tracker dashboard.
+Render 2nd page
 '''
 
 # from io import StringIO
