@@ -6,7 +6,7 @@ import pandas as pd
 
 
 def process_golf_courses(df: pd.DataFrame,
-                         col_name: str = 'Golf Course Name') -> pd.DataFrame:
+                         col_name: str = 'Course Name') -> pd.DataFrame:
 
     '''
     Cleans the DataFrame by removing invalid entries and redundant golf course records.

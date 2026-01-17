@@ -49,6 +49,27 @@ def enrich_golf_course_addresses(
           (Find Place + Place Details), which may incur higher costs.
         - Fields: Uses specific 'address_component' fields to retrieve postcodes 
           which are not available in standard string-based searches.
+
+    Implementation Notes:
+    * Two-Step Geocoding: We use a 'Find Place' -> 'Place Details' workflow. 
+      'Find Place' is used for the initial discovery and precision metadata 
+      (location_type), while 'Place Details' is required to fetch granular 
+      'address_components' for postcode and street-level parsing.
+    
+    * Activity Heuristics: Confidence scoring relies on a "Target + Keyword" 
+      model. This accommodates cases where Google identifies a location as a 
+      generic 'park' or 'establishment' but the name or search query 
+      confirms the specific activity (e.g., 'golf').
+    
+    * API Field Constraints: Field names are intentionally pluralized 
+      (e.g., 'address_components', 'types') to align with the latest 
+      Google Maps Python Client requirements, ensuring all metadata is 
+      returned in the response.
+    
+    * UK Addressing: The cleaning logic assumes a UK standard. Named properties 
+      (without numbers) are treated as distinct components from the street 
+      (route) to prevent "Address Line 1" collisions.
+          
     '''
     gmaps = googlemaps.Client(key=api_key)
 
