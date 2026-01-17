@@ -36,7 +36,7 @@ def process_golf_courses(df: pd.DataFrame,
     initial_count = len(df)
 
     # Drop actual NaN/None values
-    df = df.dropna(subset=[col_name])
+    df = df.dropna(subset=[col_name]).copy()
 
     # Drop rows that are just empty strings or whitespace
     df = df[df[col_name].astype(str).str.strip() != ""]
