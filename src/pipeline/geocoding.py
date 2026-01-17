@@ -118,7 +118,11 @@ def enrich_golf_course_addresses(
                         if found_loc_type:
                             full_result['geometry']['location_type'] = found_loc_type
 
-                        df.at[index, 'Confidence'] = calculate_confidence(full_result, course_name)
+                        df.at[index, 'Confidence'] = calculate_confidence(
+                            full_result,
+                            course_name,
+                            target_types=['golf_course'],
+                            keyword='golf')
 
             # --- SMART THROTTLE ---
             if rows_to_process > throttle_threshold:

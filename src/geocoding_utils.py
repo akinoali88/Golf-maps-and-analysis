@@ -115,46 +115,58 @@ def build_clean_address(components: List[Dict[str, Any]]) -> Optional[str]:
     return ", ".join([part for part in full_address_list if part])
 
 
-def calculate_confidence(result: Dict[str, Any], search_query: str = "") -> str:
+def calculate_confidence(result: Dict[str, Any],
+                         search_query: str = "",
+                         target_types: List[str] = None,
+                         keyword: str = "" ) -> str:
     '''
-    Evaluates the reliability of a Google Place result for golf course data.
+    Evaluates the reliability of a Google Place result against specific activity criteria.
 
-    Calculates confidence by checking for 'golf_course' tags, the presence of 
-    the word 'golf' in the returned name or the original search query, and 
-    the precision of the location. 
+    This function determines 'trustworthiness' by cross-referencing the API's 
+    categorical 'types' and the returned 'name' against user-defined targets. 
+    It is designed to be activity-agnostic, allowing for validation of golf 
+    courses, tennis clubs, or any other specific category.
 
     Args:
-        result: The result dictionary from Google's Place Details or Find Place API.
-        search_query: The original name searched (used as a fallback for 
-            verification when API tags are generic).
+        result: The dictionary returned by the Google Places API (Find Place or Details).
+        search_query: The original string used to perform the search.
+        target_types: A list of Google 'types' that signal a direct match 
+            (e.g., ['golf_course'] or ['spa']).
+        keyword: A specific activity string to validate against the returned name 
+            (e.g., 'golf' or 'tennis').
 
     Returns:
-        str: A rating of 'High', 'Medium', or 'Low'.
-             - 'High': Valid golf match with a specific Place ID and no partial match.
-             - 'Medium': General establishment or park match.
-             - 'Low': Fuzzy match or non-establishment result.
+        str: A confidence rating:
+            - 'High': Matches target types/keyword and is not a partial match.
+            - 'Medium': Identified as a general establishment or POI, but lacks 
+              specific activity confirmation.
+            - 'Low': Flagged as a partial/fuzzy match or lacks required metadata.
+    
     '''
     types = result.get('types', [])
-
-    # Get the name Google returned
     found_name = result.get('name', '').lower()
     search_query = search_query.lower()
+    keyword = keyword.lower()
 
-    # DETECTION: Is it actually a golf course?
-    # We check the Google tags, the Google name, AND your original search query
-    is_golf_related = (
-        'golf_course' in types or 
-        'golf' in found_name or 
-        'golf' in search_query
-    )
+    # Defaults to empty list if none provided
+    target_types = target_types or []
+
+    # DYNAMIC DETECTION:
+    # 1. Is one of our target types in the Google 'types' list?
+    type_match = any(t in types for t in target_types)
+
+    # 2. Does the keyword appear in the result name or the original search?
+    keyword_match = keyword in found_name or keyword in search_query if keyword else False
+
+    is_activity_related = type_match or keyword_match
 
     # HIGH CONFIDENCE
-    # If we know it's golf-related and Google gave us a specific Place ID result
-    # that isn't a "partial match", we treat it as High.
-    if is_golf_related and not result.get('partial_match', False):
+    # Valid match for the specific activity without partial name matching
+    if is_activity_related and not result.get('partial_match', False):
         return 'High'
 
     # MEDIUM CONFIDENCE
+    # Valid establishment, but doesn't specifically hit our target activity tags
     if 'establishment' in types or 'point_of_interest' in types:
         return 'Medium'
 
