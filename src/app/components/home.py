@@ -1,16 +1,18 @@
 '''
-Render the home tab for the Child Feeding Progress Tracker dashboard.
+Render the home tab for ....
 '''
 
 # from io import StringIO
 
 #from dash import dcc, html, callback, Input, Output
 # from dash.exceptions import PreventUpdate
-# import pandas as pd
+import pandas as pd
 import dash_bootstrap_components as dbc
+from dash import dcc, html
 from src.app.dashboard_logic import create_page_header
+from src.app.base_graphs import map_golf_courses
 
-def render_home_tab() -> dbc.Container:
+def render_home_tab(df: pd.DataFrame) -> dbc.Container:
 
     '''
     This function constructs the main dashboard layout for 
@@ -32,6 +34,8 @@ def render_home_tab() -> dbc.Container:
 
     '''
 
+    initial_fig = map_golf_courses(df)
+
     return dbc.Container([
             # Header Section
             create_page_header(
@@ -41,10 +45,28 @@ def render_home_tab() -> dbc.Container:
                     icon_class='globe-europe-africa'),
 
             # Stat Cards
-            'Stat cards',
+            #'Stat cards',
 
-            # Map
-            'Map of Golf courses played at'
+            # Map golf courses
+            dbc.Row([
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.H5('Golf Courses',
+                                    className='card-title'),
+
+                            # Add filters
+
+
+                            # Output graph
+                            dcc.Graph(id='maps',
+                                      figure=initial_fig,
+                                      config={'displayModeBar': False},
+                                      )
+                        ])
+                    ], className='shadow-sm mb-4')
+                ], width=12)
+            ]) # Close Row
 
         ], fluid=True) # Close Container
 
