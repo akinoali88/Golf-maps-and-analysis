@@ -38,7 +38,8 @@ enriched_gc_df = enrich_golf_course_addresses(
 
 validated_gc_df, validation_errors = validate_golf_courses(enriched_gc_df)
 
-
+if len(validation_errors) > 0:
+    print(validation_errors)
 
 # Create Dash app
 # app = create_dash_app(validated_gc_df)

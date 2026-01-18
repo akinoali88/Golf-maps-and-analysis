@@ -5,8 +5,9 @@ Create pydantic model
 
 from enum import Enum
 import re
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic_extra_types.coordinate import Longitude, Latitude
+from pydantic_extra_types.country import CountryAlpha3
 
 
 class GolfCourseTypes(str, Enum):
@@ -60,9 +61,9 @@ class GolfCourse(BaseModel):
 
     course_name: str
     country: str
-    country_code: str
+    country_code: CountryAlpha3
     course_type: GolfCourseTypes
-    address: str
+    address: str = Field(min_length=5, max_length=150)
     post_code: str
     latitude: Latitude
     longitude: Longitude
@@ -74,6 +75,12 @@ class GolfCourse(BaseModel):
     @model_validator(mode='after')
     def check_postcode_by_country(self):
 
+        '''
+        Validates the postcode format is consistent with country stadard
+        It currently supports GBR (UK) and FRA (France).
+
+        '''
+
         if self.country_code == 'GBR':
             if not re.match(UK_POSTCODE_REGEX, self.post_code):
                 raise ValueError(f"Invalid UK postcode format: {self.post_code}")
@@ -81,5 +88,30 @@ class GolfCourse(BaseModel):
         elif self.country_code == 'FRA':
             if not re.match(FR_POSTCODE_REGEX, self.post_code):
                 raise ValueError(f"France postcodes must be exactly 5 digits: {self.post_code}")
+
+        return self
+
+    @model_validator(mode='after')
+    def validate_par_against_course_type(self) -> 'GolfCourse':
+
+        '''
+        Checks that par for courses is consistent with course type
+        '''
+
+        course_type = self.course_type
+        par = self.par
+
+        if course_type == GolfCourseTypes.NINE_HOLE_PAR_3:
+            if par != 27:
+                raise ValueError(f"For a 9 Hole Par 3 course, par must be 27. Received: {par}")
+
+        elif course_type == GolfCourseTypes.NINE_HOLE:
+            if not 28 <= par <= 45:
+                raise ValueError(f"For a 9 Hole course, par must be between 28 and 45."
+                                 f"Received: {par}")
+
+        elif course_type == GolfCourseTypes.EIGHTEEN_HOLE:
+            if not 68 <= par <= 74:
+                raise ValueError(f"For an 18 Hole course, par must be between 68 and 74. Received: {par}")
 
         return self
