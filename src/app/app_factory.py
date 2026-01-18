@@ -6,11 +6,11 @@ Includes functions to create Plotly figures and initialize the Dash app.
 from dash import Dash #,  dcc
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
-# import pandas as pd
+import pandas as pd
 from src.app.components import render_home_tab, render_page2, render_page3
 
 
-def create_dash_app() -> Dash:
+def create_dash_app(df: pd.DataFrame) -> Dash:
     '''
     Create and configure a Dash application for baby feeding schedule visualization.
 
@@ -46,7 +46,7 @@ def create_dash_app() -> Dash:
 
                 # --- Home page tab ---
                 dbc.Tab([
-                    render_home_tab()],
+                    render_home_tab(df)],
                     label='Location Maps',
                     label_class_name='bg-primary-subtle text-grey',
                     ),
