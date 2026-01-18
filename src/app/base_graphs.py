@@ -4,8 +4,9 @@ Base graph functions for
 
 import pandas as pd
 import plotly.express as px
+from plotly.graph_objects import Figure
 
-def map_golf_courses(df: pd.DataFrame):
+def map_golf_courses(df: pd.DataFrame) -> Figure:
 
     '''
     Docstring for map_golf_courses
@@ -25,7 +26,4 @@ def map_golf_courses(df: pd.DataFrame):
 
     fig.update_layout(scattermode='group')
 
-
-    fig.show()
-
-    return
+    return fig
