@@ -23,21 +23,17 @@ golf_courses = load_source_data(file_name='golf rounds.xlsx',
                                 excel_params={
                                     'sheet_name': 'golf courses',
                                     'skiprows': 3,
-                                    'usecols': 'B:K',
+                                    'usecols': 'B:L',
                                             })
 
 # Clean Golf Course Data
-golf_course = process_golf_courses(golf_courses)
+gc_df = process_golf_courses(golf_courses)
 
-output = enrich_golf_course_addresses(
-    df=golf_course,
+enriched_gc_df = enrich_golf_course_addresses(
+    df=gc_df,
     api_key=api_key,
     )
 
-print(output)
-
-
-
 # Create Dash app
-app = create_dash_app()
+app = create_dash_app(enriched_gc_df)
 app.run(debug=True, use_reloader=False, port=8052)
