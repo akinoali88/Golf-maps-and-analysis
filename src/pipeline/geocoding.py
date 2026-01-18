@@ -78,7 +78,7 @@ def enrich_golf_course_addresses(
     rows_to_process = mask.sum()
 
     if rows_to_process == 0:
-        print('No missing addresses found. Skipping geocoding.')
+        print('✅ All golf courses have location data. Skipping geocoding.')
         return df
 
     print(f"Found {rows_to_process} records to enrich.")

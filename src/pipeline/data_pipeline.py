@@ -45,7 +45,7 @@ def process_golf_courses(df: pd.DataFrame,
     if rows_removed > 0:
         print(f"Removed {rows_removed} rows with missing Golf Course Names.")
     else:
-        print("No missing names found.")
+        print("✅ All golf courses have a name.")
 
 
     # 2. Identify duplicate golf course entiries and remove
@@ -58,7 +58,7 @@ def process_golf_courses(df: pd.DataFrame,
         print(f"Found {len(duplicate_list)} duplicate entries.")
         print(f"These are the duplicate courses: {', '.join(duplicate_list)}")
     else:
-        print("✅ No duplicate courses in dataset\n")
+        print("✅ No duplicate courses in dataset")
 
     # Drop the duplicates and return the clean DataFrame
     df_cleaned = df.drop_duplicates(subset=[col_name], keep='first').copy()
