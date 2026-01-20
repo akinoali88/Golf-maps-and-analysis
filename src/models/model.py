@@ -69,7 +69,7 @@ class GolfCourse(BaseModel):
     longitude: Longitude
     par: int
     course_index: float
-    slope_rating: int
+    slope_rating: int = Field(ge=55, le=155)
 
 
     @model_validator(mode='after')
@@ -112,6 +112,7 @@ class GolfCourse(BaseModel):
 
         elif course_type == GolfCourseTypes.EIGHTEEN_HOLE:
             if not 68 <= par <= 74:
-                raise ValueError(f"For an 18 Hole course, par must be between 68 and 74. Received: {par}")
+                raise ValueError("For an 18 Hole course, par must be "
+                                 f"between 68 and 74. Received: {par}")
 
         return self
