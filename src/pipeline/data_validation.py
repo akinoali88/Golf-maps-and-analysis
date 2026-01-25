@@ -1,20 +1,21 @@
 '''
 Data Validation Module
 ----------------------
-This module contains the functional logic for validating raw golf course data
+This module contains the functional logic for validating raw golf data
 using Pydantic models. It separates valid records from invalid ones, providing
 a clean dataset for the dashboard and a detailed error log for debugging.
 '''
 
 import pandas as pd
 
-from pydantic import ValidationError
-from src.models.model import GolfCourse
+from pydantic import BaseModel, ValidationError
 
 
-def validate_golf_courses(df: pd.DataFrame) -> pd.DataFrame:
+def validate_data(df: pd.DataFrame,
+                          basemodel: BaseModel) -> pd.DataFrame:
+
     '''
-    Validates a DataFrame of golf course data against the GolfCourses Pydantic model.
+    Validates a DataFrame of golf course data against the a define Pydantic BaseModel.
 
     Each row of the input DataFrame is checked for type correctness, required fields, 
     and constraint violations (e.g., valid Enums, positive numbers). Valid rows are 
@@ -46,7 +47,7 @@ def validate_golf_courses(df: pd.DataFrame) -> pd.DataFrame:
     for record_dict in df.to_dict('records'):
         try:
             # The Pydantic model validates the row data during instantiation
-            record = GolfCourse(**record_dict)
+            record = basemodel(**record_dict)
 
             # ensures enum values serialized to str by using json mode
             valid_records.append(record.model_dump(mode='json'))
