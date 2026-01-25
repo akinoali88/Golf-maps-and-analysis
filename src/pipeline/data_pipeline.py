@@ -64,3 +64,7 @@ def process_golf_courses(df: pd.DataFrame,
     df_cleaned = df.drop_duplicates(subset=[col_name], keep='first').copy()
 
     return df_cleaned
+
+def process_golf_rounds(df: pd.DataFrame) -> pd.DataFrame:
+
+    return df
