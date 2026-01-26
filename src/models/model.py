@@ -5,9 +5,12 @@ Create pydantic model
 
 from enum import Enum
 import re
+from typing import ClassVar
+from datetime import datetime, date
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic_extra_types.coordinate import Longitude, Latitude
 from pydantic_extra_types.country import CountryAlpha3
+
 
 
 class GolfCourseTypes(str, Enum):
@@ -17,6 +20,15 @@ class GolfCourseTypes(str, Enum):
     NINE_HOLE_PAR_3 = '9 hole - par 3 course'
     NINE_HOLE = '9 hole'
     EIGHTEEN_HOLE = '18 hole'
+
+class GameFormat(str, Enum):
+
+    '''Golf game formats'''
+
+    STROKE_PLAY = 'Stroke Play'
+    SCRAMBLE = 'Scramble'
+    WILD_GOLF = 'Wild Golf'
+
 
 def snake_to_space_title(field_name: str) -> str:
 
@@ -116,3 +128,33 @@ class GolfCourse(BaseModel):
                                  f"between 68 and 74. Received: {par}")
 
         return self
+
+    # set label for class for reporting
+    label: ClassVar[str] = 'golf courses'
+
+
+class GolfRounds(BaseModel):
+
+    '''
+    Class to capture key round date. 
+    Extras are allowed to capture performance indicators and these
+    will be validated with an additional basemodel for performance
+    '''
+
+    # Allow extra types at this stage
+    model_config = ConfigDict(
+        extra='ignore',
+        alias_generator=snake_to_space_title,
+        populate_by_name=True
+    )
+
+    course: str
+    date: date
+    year: int = Field(ge=2016, le=datetime.now().year)
+    format: GameFormat
+    holes: int
+    score: int
+    over_par: int
+
+    # set label for class for reporting
+    label: ClassVar[str] = 'golf rounds'
