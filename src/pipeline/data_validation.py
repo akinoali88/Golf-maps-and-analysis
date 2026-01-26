@@ -6,15 +6,17 @@ using Pydantic models. It separates valid records from invalid ones, providing
 a clean dataset for the dashboard and a detailed error log for debugging.
 '''
 
+from typing import Tuple
 import pandas as pd
 
 from pydantic import BaseModel, ValidationError
 
 
-def validate_data(df: pd.DataFrame,
-                          basemodel: BaseModel) -> pd.DataFrame:
 
-    '''
+def validate_data(df: pd.DataFrame,
+                  basemodel: BaseModel) -> Tuple[pd.DataFrame, pd.DataFrame]:
+
+    """
     Validates a DataFrame of golf course data against the a define Pydantic BaseModel.
 
     Each row of the input DataFrame is checked for type correctness, required fields, 
@@ -26,15 +28,15 @@ def validate_data(df: pd.DataFrame,
         df (pd.DataFrame): The raw input data loaded from the source.
 
     Returns:
-        tuple[pd.DataFrame, pd.DataFrame]: A tuple containing:
-            - df_validated: DataFrame of clean records, indexed by the ID column.
-            - error_df: DataFrame containing the original failed rows plus 
-              'total_errors' and 'error_details' columns.
+        Tuple:
+            - df_validated (pd.DataFrame): DataFrame of clean records, indexed by the ID column.
+            - error_df (pd.DataFrame): DataFrame containing the original failed rows plus 
+            'total_errors' and 'error_details' columns.
 
     Note:
         This function outputs a summary report to the console using ANSI styling
         to highlight validation failures or successes..
-    '''
+    """
 
     # Define ANSI codes for bold and reset
     bold = '\033[1m'
@@ -78,11 +80,11 @@ def validate_data(df: pd.DataFrame,
 
         print(f"✅ {len(df_validated)} / {len(df)} records have passed validation checks. "
               f"\n🚨 {total_errors} {input_label} failed validation of the "
-              f"{bold}golf course {end_bold} requirements. "
+              f"{bold}{basemodel.label}{end_bold} requirements. "
               "Please investigate further.")
 
     else:
         print("✅ All rows passed validation successfully of "
-                f"{bold}golf course{end_bold} datasets.")
+                f"{bold}{basemodel.label}{end_bold} datasets.")
 
     return df_validated, df_errors
