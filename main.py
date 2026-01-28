@@ -4,24 +4,26 @@ Main orchestration page
 
 import os
 from dotenv import load_dotenv
+
 from src.pipeline.data_handler import load_source_data
 from src.pipeline.data_pipeline import process_golf_courses
-from src.pipeline.data_validation import validate_golf_courses
+from src.models.model import GolfCourse, GolfRounds
+from src.pipeline.data_validation import validate_data
 from src.pipeline.geocoding import enrich_golf_course_addresses
-from src.app.app_factory import create_dash_app
+# from src.app.app_factory import create_dash_app
 
 
-# This looks for the .env file and loads the variables into your environment
+# Get google maps API keu
 load_dotenv()
-
-# Now you can access it like a regular environment variable
 api_key = os.getenv('GOOGLE_MAPS_API_KEY')
 
 if not api_key:
     raise ValueError("API Key not found! Make sure your .env file is set up correctly.")
 
+# Step 1: Get Golf Course Data
 golf_courses = load_source_data(file_name='golf rounds.xlsx',
                                 excel_params={
+                                    'engine': 'calamine',
                                     'sheet_name': 'golf courses',
                                     'skiprows': 3,
                                     'usecols': 'B:M',
@@ -36,10 +38,27 @@ enriched_gc_df = enrich_golf_course_addresses(
     api_key=api_key,
     )
 
-validated_gc_df, validation_errors = validate_golf_courses(enriched_gc_df)
+validated_gc_df, gc_errors = validate_data(enriched_gc_df, GolfCourse)
 
-if len(validation_errors) > 0:
-    print(validation_errors)
+
+if len(gc_errors) > 0:
+    print("XX validation errors - outputs exported to XYZ")
+
+
+# Step 2: Get Golf Round Data
+
+gr_df = load_source_data(file_name='golf rounds.xlsx',
+                                excel_params={
+                                    'engine': 'calamine',
+                                    'sheet_name': 'Rounds',
+                                    'skiprows': 2,
+                                    'usecols': 'B:AF',
+                                            })
+
+
+validated_gr_df, errors = validate_data(gr_df, GolfRounds)
+
+
 
 # Create Dash app
 # app = create_dash_app(validated_gc_df)

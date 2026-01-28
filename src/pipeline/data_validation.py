@@ -7,10 +7,11 @@ a clean dataset for the dashboard and a detailed error log for debugging.
 '''
 
 from typing import Tuple
-import pandas as pd
 
+import pandas as pd
 from pydantic import BaseModel, ValidationError
 
+from src.pipeline.data_handler import export_data
 
 
 def validate_data(df: pd.DataFrame,
@@ -78,10 +79,18 @@ def validate_data(df: pd.DataFrame,
         # Determine pluralisation
         input_label = "input has" if total_errors == 1 else "inputs have"
 
+        export_file_name = f"{basemodel.label}_validation_errors.xlsx"
+
         print(f"✅ {len(df_validated)} / {len(df)} records have passed validation checks. "
               f"\n🚨 {total_errors} {input_label} failed validation of the "
               f"{bold}{basemodel.label}{end_bold} requirements. "
               "Please investigate further.")
+
+        export_data(df_errors, export_file_name, "errors")
+
+        print("❗ Validation errors exported to "
+              f"{bold}reporting/{export_file_name}{end_bold} file.")
+
 
     else:
         print("✅ All rows passed validation successfully of "
