@@ -52,3 +52,27 @@ def round_data():
         'Round Number': [1, 2, 2, 3], # Duplicate ID
         'Score': [72, 75, 75, 68]     # Identical row for index 1 and 2
     })
+
+
+# Fixture for data aggregation tests
+@pytest.fixture
+def sample_golf_data():
+    """Fixture to provide consistent test data."""
+    courses_df = pd.DataFrame({
+        'course_name': ['St Andrews', 'Augusta'],
+        'course_type': ['Links', 'Parkland'],
+        'par': [72, 72],
+        'country_code': ['UK', 'USA'],
+        'latitude': [56.34, 33.50],
+        'longitude': [-2.80, -82.02],
+        'course_index': [0.5, 1.2],
+        'slope_rating': [130, 140]
+    })
+
+    rounds_df = pd.DataFrame({
+        'course': ['St Andrews', 'St Andrews', 'St Andrews', 'Augusta'],
+        'score': [70, 80, 75, 72],
+        'over_par': [-2, 8, 3, 0]
+    })
+    
+    return rounds_df, courses_df
