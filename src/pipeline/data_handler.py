@@ -18,7 +18,7 @@ def load_source_data(file_name: str,
                      input_dir_path: str = 'data',
                      excel_params: dict = None) -> pd.DataFrame:
 
-    '''
+    """
     Loads raw data from an Excel file into a pandas DataFrame.
 
     This function serves as the 'Load' step in the ETL pipeline. It constructs 
@@ -41,7 +41,7 @@ def load_source_data(file_name: str,
 
     Example:
         >>> df = load_golf_courses("courses_2023.xlsx", excel_params={'sheet_name': 'UK_Courses'})
-    '''
+    """
 
     # If excel_params is None, it becomes {}
     excel_params = excel_params or {}
@@ -69,7 +69,7 @@ def export_data(
     sheet_name: str,
     output_folder: str = 'reporting'
 ) -> None:
-    '''
+    """
     Exports a DataFrame to an Excel file within a specified directory.
 
     This function ensures the target directory exists, handles common OS 
@@ -85,7 +85,7 @@ def export_data(
 
     Returns:
         None
-    '''
+    """
 
     # Convert output_folder string to a Path object relative to CWD
     output_dir = Path.cwd() / output_folder

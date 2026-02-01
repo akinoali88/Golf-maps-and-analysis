@@ -20,7 +20,7 @@ def enrich_golf_course_addresses(
     checkpoint_path: str = 'data/enriched_courses.csv'
 ) -> pd.DataFrame:
 
-    '''
+    """
     Enriches a golf course dataset with spatial data and postcodes via Google Places API.
 
     This function identifies rows missing address information and performs a two-step 
@@ -70,7 +70,7 @@ def enrich_golf_course_addresses(
       (without numbers) are treated as distinct components from the street 
       (route) to prevent "Address Line 1" collisions.
           
-    '''
+    """
     gmaps = googlemaps.Client(key=api_key)
 
     # Identify rows needing enrichment

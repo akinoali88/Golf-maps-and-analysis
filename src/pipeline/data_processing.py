@@ -8,7 +8,7 @@ import pandas as pd
 def process_golf_courses(df: pd.DataFrame,
                          col_name: str = 'Course Name') -> pd.DataFrame:
 
-    '''
+    """
     Cleans the DataFrame by removing invalid entries and redundant golf course records.
 
     This function performs a two-stage cleanup:
@@ -30,7 +30,7 @@ def process_golf_courses(df: pd.DataFrame,
         - The function prints a summary of removed rows and a list of specific 
           duplicated courses to the console for audit purposes.
         - The returned DataFrame is a deep copy to prevent 'SettingWithCopy' warnings.
-    '''
+    """
 
     # 1. Remove rows with no golf course name
     initial_count = len(df)

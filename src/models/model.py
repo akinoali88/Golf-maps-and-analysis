@@ -15,7 +15,7 @@ from pydantic_extra_types.country import CountryAlpha3
 
 class GolfCourseTypes(str, Enum):
 
-    '''Golf course types'''
+    """Golf course types"""
 
     NINE_HOLE_PAR_3 = '9 hole - par 3 course'
     NINE_HOLE = '9 hole'
@@ -23,7 +23,7 @@ class GolfCourseTypes(str, Enum):
 
 class GameFormat(str, Enum):
 
-    '''Golf game formats'''
+    """Golf game formats"""
 
     STROKE_PLAY = 'Stroke Play'
     SCRAMBLE = 'Scramble'
@@ -32,7 +32,7 @@ class GameFormat(str, Enum):
 
 def snake_to_space_title(field_name: str) -> str:
 
-    '''
+    """
     Converts a snake_case string to a Title Case string with spaces.
 
     This is primarily used as an alias generator for Pydantic models to map 
@@ -51,7 +51,7 @@ def snake_to_space_title(field_name: str) -> str:
     Note:
         This function uses .title(), which may capitalize internal acronyms 
         incorrectly (e.g., 'iso_code' becomes 'Iso Code' instead of 'ISO Code').
-    '''
+    """
 
     # Converts 'country_code' to 'Country Code'
     return field_name.replace("_", " ").title()
@@ -87,11 +87,10 @@ class GolfCourse(BaseModel):
     @model_validator(mode='after')
     def check_postcode_by_country(self):
 
-        '''
+        """
         Validates the postcode format is consistent with country stadard
         It currently supports GBR (UK) and FRA (France).
-
-        '''
+        """
 
         if self.country_code == 'GBR':
             if not re.match(UK_POSTCODE_REGEX, self.post_code):
@@ -106,9 +105,9 @@ class GolfCourse(BaseModel):
     @model_validator(mode='after')
     def validate_par_against_course_type(self) -> 'GolfCourse':
 
-        '''
+        """
         Checks that par for courses is consistent with course type
-        '''
+        """
 
         course_type = self.course_type
         par = self.par
@@ -135,11 +134,11 @@ class GolfCourse(BaseModel):
 
 class GolfRounds(BaseModel):
 
-    '''
+    """
     Class to capture key round date. 
     Extras are allowed to capture performance indicators and these
     will be validated with an additional basemodel for performance
-    '''
+    """
 
     # Allow extra types at this stage
     model_config = ConfigDict(

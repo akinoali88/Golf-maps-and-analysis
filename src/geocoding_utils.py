@@ -27,10 +27,10 @@ Internal Logic Note:
 from typing import List, Dict, Any, Optional
 
 def extract_postcode(components: List[Dict[str, Any]]) -> Optional[str]:
-    '''
+    """
     Finds both the main postcode and any suffix, 
     then joins them correctly.
-    '''
+    """
     postcode_main = ""
     postcode_suffix = ""
 
@@ -49,7 +49,7 @@ def extract_postcode(components: List[Dict[str, Any]]) -> Optional[str]:
     return postcode_main or postcode_suffix or None
 
 def build_clean_address(components: List[Dict[str, Any]]) -> Optional[str]:
-    '''
+    """
     Constructs a comma-separated address string by filtering out 
     geographic metadata.
 
@@ -73,7 +73,7 @@ def build_clean_address(components: List[Dict[str, Any]]) -> Optional[str]:
         ... ]
         >>> build_clean_address(components)
         '10, Downing St'
-    '''
+    """
     # Types we want to EXCLUDE
     excluded_types = {'postal_code', 'country', 'postal_code_suffix'}
 
@@ -119,7 +119,7 @@ def calculate_confidence(result: Dict[str, Any],
                          search_query: str = "",
                          target_types: List[str] = None,
                          keyword: str = "" ) -> str:
-    '''
+    """
     Evaluates the reliability of a Google Place result against specific activity criteria.
 
     This function determines 'trustworthiness' by cross-referencing the API's 
@@ -142,7 +142,7 @@ def calculate_confidence(result: Dict[str, Any],
               specific activity confirmation.
             - 'Low': Flagged as a partial/fuzzy match or lacks required metadata.
     
-    '''
+    """
     types = result.get('types', [])
     found_name = result.get('name', '').lower()
     search_query = search_query.lower()
