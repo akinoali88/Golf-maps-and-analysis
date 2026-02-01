@@ -67,4 +67,58 @@ def process_golf_courses(df: pd.DataFrame,
 
 def process_golf_rounds(df: pd.DataFrame) -> pd.DataFrame:
 
+    '''
+    Validates the integrity of golf round data by checking for duplicates.
+
+    This function performs two checks:
+    1. Identifies identical rows across all columns.
+    2. Identifies collisions where the 'Round Number' is repeated across 
+       different entries. 
+       
+    Warnings and the offending rows are printed to the console if 
+    duplicates are found.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing golf round data. 
+            Expected to have a 'Round Number' column.
+
+    Returns:
+        pd.DataFrame: The original DataFrame, unchanged.
+
+    '''
+
+    duplicate_counter = 0
+
+    duplicate_round_mask = df.duplicated(keep=False)
+
+    # Check for duplicate round entries
+    if duplicate_round_mask.any():
+
+        duplicate_rows = df[duplicate_round_mask]
+        print(f"⚠️ Found {len(duplicate_rows)} duplicate rows."
+              "Please review and resolve duplicates.")
+        print(duplicate_rows)
+
+    else:
+        # no duplicate round entries
+        duplicate_counter +=1
+
+    # Check for duplicate round numbers
+    duplicate_rounds_id_mask = df.duplicated(subset=['Round Number'], keep='first')
+
+    if duplicate_rounds_id_mask.any():
+
+        duplicate_round_ids = df.loc[duplicate_rounds_id_mask, 'Round Number']
+        print(f"⚠️ Found {len(duplicate_round_ids)} duplicate round ids\n"
+              "Please review and ensure all round entries have a unique number.")
+
+    else:
+        # no duplicate round numbers
+        duplicate_counter +=1
+
+    if duplicate_counter == 2:
+
+        # Print success message if no duplicates found
+        print("✅ No duplicate rounds or round numbers detected.")
+
     return df
