@@ -13,7 +13,7 @@ def test_aggregation_math(sample_golf_data):
 
     # Filter for St Andrews to check stats
     st_andrews = result[result['course'] == 'St Andrews'].iloc[0]
-    
+
     assert st_andrews['number_of_rounds'] == 3
     assert st_andrews['best_score'] == 70
     assert st_andrews['avg_score'] == 75.0
@@ -31,9 +31,9 @@ def test_merge_completeness(sample_golf_data):
 def test_column_selection(sample_golf_data):
     """Verify that only the requested columns are returned from the courses DF."""
     rounds, courses = sample_golf_data
-    
+
     # Add an extra column that shouldn't be in the final output
     courses['secret_notes'] = 'Don\'t include me'
-    
+
     result = generate_course_summaries(rounds, courses)
     assert 'secret_notes' not in result.columns
