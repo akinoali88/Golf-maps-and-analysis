@@ -40,6 +40,5 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
     fig.update_layout(
         map_style="carto-voyager-nolabels",
         scattermode='group')    # Prevent points from overlapping
-    fig.show()
 
     return fig

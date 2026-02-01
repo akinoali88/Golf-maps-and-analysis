@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 
 from src.pipeline.data_handler import load_source_data
 from src.pipeline.data_processing import process_golf_courses, process_golf_rounds
-from src.models.model import GolfCourse, GolfRounds
+from src.pipeline.data_transformation import generate_course_summaries
 from src.pipeline.data_validation import validate_data
 from src.pipeline.geocoding import enrich_golf_course_addresses
-from src.pipeline.data_aggregation import generate_course_summaries
-# from src.app.app_factory import create_dash_app
+from src.models.model import GolfCourse, GolfRounds
+from src.app.app_factory import create_dash_app
 
 
 # Get google maps API keu
@@ -56,10 +56,7 @@ gr_df_processed = process_golf_rounds(gr_df)
 
 validated_gr_df, errors = validate_data(gr_df_processed, GolfRounds)
 
-golf_rounds = generate_course_summaries(validated_gr_df, validated_gc_df)
-
-print(golf_rounds)
-
+golf_round_summary = generate_course_summaries(validated_gr_df, validated_gc_df)
 
 # transform golf course data
 # to do
@@ -68,5 +65,5 @@ print(golf_rounds)
 # to do
 
 # Create Dash app
-# app = create_dash_app(validated_gc_df)
-# app.run(debug=True, use_reloader=False, port=8052)
+app = create_dash_app(golf_round_summary)
+app.run(debug=True, use_reloader=False, port=8052)
