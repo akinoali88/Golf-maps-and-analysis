@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 
 from src.pipeline.data_handler import load_source_data
-from src.pipeline.data_pipeline import process_golf_courses
+from src.pipeline.data_pipeline import process_golf_courses, process_golf_rounds
 from src.models.model import GolfCourse, GolfRounds
 from src.pipeline.data_validation import validate_data
 from src.pipeline.geocoding import enrich_golf_course_addresses
@@ -40,11 +40,6 @@ enriched_gc_df = enrich_golf_course_addresses(
 
 validated_gc_df, gc_errors = validate_data(enriched_gc_df, GolfCourse)
 
-
-if len(gc_errors) > 0:
-    print("XX validation errors - outputs exported to XYZ")
-
-
 # Step 2: Get Golf Round Data
 
 gr_df = load_source_data(file_name='golf rounds.xlsx',
@@ -52,13 +47,19 @@ gr_df = load_source_data(file_name='golf rounds.xlsx',
                                     'engine': 'calamine',
                                     'sheet_name': 'Rounds',
                                     'skiprows': 2,
-                                    'usecols': 'B:AF',
+                                    'usecols': 'B:AG',
                                             })
 
 
-validated_gr_df, errors = validate_data(gr_df, GolfRounds)
+gr_df_processed = process_golf_rounds(gr_df)
 
+validated_gr_df, errors = validate_data(gr_df_processed, GolfRounds)
 
+# transform golf course data
+# to do
+
+# Merge golf rounds with golf course data
+# to do
 
 # Create Dash app
 # app = create_dash_app(validated_gc_df)
