@@ -148,6 +148,7 @@ class GolfRounds(BaseModel):
         populate_by_name=True
     )
 
+    round_number: int = Field(ge=1)
     course: str
     date: date
     year: int = Field(ge=2016, le=datetime.now().year)
@@ -158,3 +159,14 @@ class GolfRounds(BaseModel):
 
     # set label for class for reporting
     label: ClassVar[str] = 'golf rounds'
+
+class RoundPerformance(BaseModel):
+
+    '''
+    Add performance indicators to golf round data
+    '''
+
+    round_number: int = Field(ge=1)
+
+    # set label for class for reporting
+    label: ClassVar[str] = 'golf round performance'
