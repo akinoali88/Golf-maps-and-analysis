@@ -3,7 +3,7 @@ Tests file for data aggregation functions.
 '''
 
 # Import your function from your specific file
-from src.pipeline.data_aggregation import generate_course_summaries
+from src.pipeline.data_transformation import generate_course_summaries
 
 
 def test_aggregation_math(sample_golf_data):
