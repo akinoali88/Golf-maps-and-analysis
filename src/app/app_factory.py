@@ -29,12 +29,14 @@ def create_dash_app(df: pd.DataFrame) -> Dash:
     '''
 
     # load bootstrap figure templates
-    dbc_theme = 'minty'
+    dbc_theme = 'spacelab'
 
     load_figure_template(dbc_theme)
     dbc_css = 'https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css'
 
-    app = Dash(__name__, external_stylesheets=[dbc.themes.MINTY, dbc_css, dbc.icons.BOOTSTRAP])
+    app = Dash(__name__,
+               external_stylesheets=[dbc.themes.SPACELAB, dbc_css, dbc.icons.BOOTSTRAP]
+               )
 
     # Define the app layout
     app.layout = dbc.Container([
@@ -67,7 +69,7 @@ def create_dash_app(df: pd.DataFrame) -> Dash:
                     ]) # Close dcc.Tabs
         ],
         fluid=True,
-        className='bg-success',
+        className='bg-primary',
         style={'minHeight': '100vh'}) # Close dbc.Container
 
     return app

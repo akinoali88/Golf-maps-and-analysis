@@ -22,8 +22,12 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
         lat='latitude',
         lon='longitude',
         text='course',
-        size = 'number_of_rounds',
+        size='number_of_rounds',
         color='avg_over_par',
+        center={
+            'lat': 51.26,
+            'lon': 0.65},
+        zoom=9,
         )
 
     fig.update_layout()

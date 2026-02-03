@@ -52,21 +52,26 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
                 dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
-                            html.H5('Golf Courses',
-                                    className='card-title'),
+                            # Title
+                            html.H5("Akin's Course Analytics", className='card-title'),
 
-                            # Add filters
-
-
-                            # Output graph
-                            dcc.Graph(id='maps',
-                                      figure=initial_fig,
-                                      config={'displayModeBar': False},
-                                      )
-                        ])
+                            # The Map
+                            dcc.Graph(
+                                id='maps',
+                                figure=initial_fig,
+                                config={'displayModeBar': False},
+                                # 'flex': '1' tells the graph to grow and fill all available space
+                                style={'height': '100%', 'flex': '1'}
+                            )
+                        ],
+                        style={
+                            "height": "75vh", 
+                            "display": "flex", 
+                            "flexDirection": "column"
+                        })
                     ], className='shadow-sm mb-4')
                 ], width=12)
-            ]) # Close Row
+            ])
 
         ], fluid=True) # Close Container
 

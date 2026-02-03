@@ -21,7 +21,7 @@ api_key = os.getenv('GOOGLE_MAPS_API_KEY')
 if not api_key:
     raise ValueError("API Key not found! Make sure your .env file is set up correctly.")
 
-# Step 1: Get Golf Course Data
+# Step 1: Load, process and validate Golf Course Data
 golf_courses = load_source_data(file_name='golf rounds.xlsx',
                                 excel_params={
                                     'engine': 'calamine',
@@ -31,7 +31,6 @@ golf_courses = load_source_data(file_name='golf rounds.xlsx',
                                     'dtype': {'Post Code': str},
                                             })
 
-# Clean Golf Course Data
 gc_df = process_golf_courses(golf_courses)
 
 enriched_gc_df = enrich_golf_course_addresses(
@@ -41,8 +40,7 @@ enriched_gc_df = enrich_golf_course_addresses(
 
 validated_gc_df, gc_errors = validate_data(enriched_gc_df, GolfCourse)
 
-# Step 2: Get Golf Round Data
-
+# Step 2: Load, process and validate golf rounds data
 gr_df = load_source_data(file_name='golf rounds.xlsx',
                                 excel_params={
                                     'engine': 'calamine',
@@ -56,6 +54,9 @@ gr_df_processed = process_golf_rounds(gr_df)
 
 validated_gr_df, errors = validate_data(gr_df_processed, GolfRounds)
 
+# Step 3: Load performance data
+
+# Step 4: Prepare output metrics
 golf_round_summary = generate_course_summaries(validated_gr_df, validated_gc_df)
 
 # transform golf course data
