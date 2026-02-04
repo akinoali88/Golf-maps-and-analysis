@@ -52,4 +52,7 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
         left_on='course',
         right_on='course_name').drop(columns=['course_name'])
 
+    course_round_summary['performance_rank'] = (course_round_summary['avg_over_par'].
+                                                rank(pct=True, ascending=True))
+
     return course_round_summary

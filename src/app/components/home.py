@@ -36,12 +36,15 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
 
     initial_fig = map_golf_courses(df)
 
+    rounds = df['number_of_rounds'].sum()
+
     return dbc.Container([
             # Header Section
             create_page_header(
-                    header_title="Akin's Golf Course History",
-                    subtitle='Overview of golf courses that I have played',
-                    footer_text='Based on rounds completed since 2016',
+                    header_title="Akin's Golf Locations",
+                    subtitle=(f'Performance analysis by golf course of {rounds} '
+                             'rounds played since 2016'),
+                    footer_text='Data tracked and visualized using Python, Dash, and Plotly',
                     icon_class='globe-europe-africa'),
 
             # Stat Cards
