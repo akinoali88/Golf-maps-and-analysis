@@ -29,7 +29,7 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
         center={
             'lat': 51.26,
             'lon': 0.65},
-        zoom=9,
+        zoom=8.5,
         hover_name='course',
         hover_data={
             'number_of_rounds': True,
