@@ -5,6 +5,7 @@ Module for dashboard logic functions including
 create state card and create page header
 
 '''
+from typing import List
 
 import dash_bootstrap_components as dbc
 from dash import html
@@ -115,3 +116,94 @@ def create_page_header(header_title: str,
     className='shadow-sm border-0 mb-3 mt-3',
     style={'borderRadius': '10px'}
     )
+
+
+def create_course_badges(
+        header_title: str,
+        courses: List[str],
+        header_colour: str = 'success') -> dbc.Row:
+
+    """
+    Creates a styled Dash Bootstrap Row featuring a color-coded title label 
+    followed by a series of course badges.
+
+    This helper is designed to sit above charts or maps to call out specific 
+    segments like 'Top 5' or 'Bottom 5' courses. It uses a horizontal 'pill' 
+    layout where the title has a solid background and courses are listed 
+    as light-colored badges.
+
+    Args:
+        header_title (str): The text to display in the leading colored box 
+            (e.g., 'Top 5').
+        courses (List[str]): A list of course names or identifiers to be 
+            rendered as badges.
+        header_colour (str): The Bootstrap theme color for the title column 
+            background. Defaults to 'success'. Common values include 
+            'success', 'danger', 'primary', or 'warning'.
+
+    Returns:
+        dbc.Row: A formatted Dash Bootstrap Row component ready for 
+            insertion into a layout.
+    """
+
+    # Validation: Ensure courses list is not empty to avoid rendering issues
+    if len(courses) == 0 or courses is None:
+        raise ValueError('The courses list cannot be empty. '
+                         'Please provide at least one course name.')
+
+
+    title_class = f'bg-{header_colour} text-white rounded-start p-2 text-start'
+
+    badge_class = (
+        'bg-light d-flex align-items-center rounded-end'
+        'border-top border-bottom border-end'
+    )
+
+
+    return  dbc.Row([
+    # Label Column with Success background
+    dbc.Col(
+        html.Span(header_title, className='fw-bold'),
+        style={"width": "320px", "flex": "0 0 320px", "maxWidth": "100%"},
+        className=title_class
+    ),
+    # Courses Column with Secondary/Light badges
+    dbc.Col([
+        dbc.Badge(
+                # This f-string combines the number and the name
+                f"{i}. {course}",
+                color='light',
+                text_color='dark',
+                className='ms-2 border shadow-sm'
+            ) for i, course in enumerate(courses, 1) # '1' tells it to start counting at 1
+        ], className=badge_class)
+                ], className='mx-0 mb-2')
+
+def get_top_bottom_courses(df,count=5, top=True):
+    """
+    Extracts and formats a list of courses based on their performance.
+
+    This helper sorts the DataFrame by 'avg_over_par' and retrieves either 
+    the top (lowest scores) or bottom (highest scores) courses, returning 
+    them as a list of strings formatted for UI display.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing golf course data. 
+            Must include 'course' and 'avg_over_par' columns.
+        count (int): The number of courses to retrieve. Defaults to 5.
+        top (bool): If True, retrieves courses with the lowest avg_over_par. 
+            If False, retrieves those with the highest. Defaults to True.
+
+    Returns:
+        List[str]: A list of strings in the format "Course Name (Score)".
+    """
+
+    # Determine if we want the top or bottom of the sorted list
+    subset = (df.sort_values('avg_over_par').head(count) if top
+                else df.sort_values('avg_over_par').tail(count))
+
+    # Return the formatted list of strings
+    return [
+        f"{course} ({score:.1f})"
+        for course, score in subset[['course', 'avg_over_par']].itertuples(index=False, name=None)
+    ]

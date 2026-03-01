@@ -9,7 +9,7 @@ Render the home tab for ....
 import pandas as pd
 import dash_bootstrap_components as dbc
 from dash import dcc, html
-from src.app.dashboard_logic import create_page_header
+from src.app.dashboard_logic import create_page_header, create_course_badges, get_top_bottom_courses
 from src.app.base_graphs import map_golf_courses
 
 def render_home_tab(df: pd.DataFrame) -> dbc.Container:
@@ -38,10 +38,13 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
 
     rounds = df['number_of_rounds'].sum()
 
+    top_courses = get_top_bottom_courses(df, top=True)
+    bottom_courses = get_top_bottom_courses(df, top=False)
+
     return dbc.Container([
             # Header Section
             create_page_header(
-                    header_title="Akin's Golf Locations",
+                    header_title="Akin's Golf Dashboard",
                     subtitle=(f'Performance analysis by golf course of {rounds} '
                              'rounds played since 2016'),
                     footer_text='Data tracked and visualized using Python, Dash, and Plotly',
@@ -58,23 +61,29 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
                             # Title
                             html.H5("Akin's Course Analytics", className='card-title'),
 
+                            # 2. Top 5 Courses Row
+                            create_course_badges(
+                                header_title='Top 5 scoring venues (avg vs par)',
+                                courses=top_courses,
+                                header_colour='success'),
+
+                            # --- BOTTOM 5 ROW ---
+                            create_course_badges(
+                                header_title='Bottom 5 scoring venues (avg vs par)',
+                                courses=bottom_courses,
+                                header_colour='warning'),
+
                             # The Map
                             dcc.Graph(
                                 id='maps',
                                 figure=initial_fig,
                                 config={'displayModeBar': False},
-                                # 'flex': '1' tells the graph to grow and fill all available space
-                                style={'height': '100%', 'flex': '1'}
-                            )
-                        ],
-                        style={
-                            "height": "75vh", 
-                            "display": "flex", 
-                            "flexDirection": "column"
-                        })
-                    ], className='shadow-sm mb-4')
-                ], width=12)
-            ])
+                                style={'height': '550px', 'marginTop': '-10px'},
+                                )
+                                    ],)
+                            ], className='shadow-sm mb-2')
+                        ], width=12)
+                    ])
 
         ], fluid=True) # Close Container
 
