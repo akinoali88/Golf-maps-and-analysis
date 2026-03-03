@@ -17,7 +17,7 @@ def create_stat_card(title: str,
     """
     Returns a Bootstrap Column containing a styled Card for metrics.
 
-    Parameters:
+    Args:
         title : str
             The title text to display at the top of the card.
         id_name : str
@@ -59,7 +59,7 @@ def create_page_header(header_title: str,
     appearance across different dashboard pages, enhancing the user interface 
     and user experience.
     
-    Parameters:
+    Args:
         header_title : str
             The main title to be displayed prominently at the top of the card.
         subtitle : str
@@ -120,6 +120,7 @@ def create_page_header(header_title: str,
 
 def create_course_badges(
         header_title: str,
+        badge_id: str,
         courses: List[str],
         header_colour: str = "success") -> dbc.Row:
 
@@ -135,6 +136,8 @@ def create_course_badges(
     Args:
         header_title (str): The text to display in the leading colored box 
             (e.g., 'Top 5').
+        badge_id (str):
+            A unique identifier for the row, used for dynamic
         courses (List[str]): A list of course names or identifiers to be 
             rendered as badges.
         header_colour (str): The Bootstrap theme color for the title column 
@@ -159,7 +162,6 @@ def create_course_badges(
         "border-top border-bottom border-end"
     )
 
-
     return  dbc.Row([
     # Label Column with Success background
     dbc.Col(
@@ -172,12 +174,14 @@ def create_course_badges(
         dbc.Badge(
                 # This f-string combines the number and the name
                 f"{i}. {course}",
+                id=f"{badge_id}_course_{i}",
                 color="light",
                 text_color="dark",
                 className="ms-2 border shadow-sm"
             ) for i, course in enumerate(courses, 1) # '1' tells it to start counting at 1
         ], className=badge_class)
-                ], className="mx-0 mb-2")
+            ],
+        className="mx-0 mb-2")
 
 def get_top_bottom_courses(df,count=5, top=True):
     """

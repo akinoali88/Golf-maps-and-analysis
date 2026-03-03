@@ -3,7 +3,7 @@ Generated Dash application factory module.
 Includes functions to create Plotly figures and initialize the Dash app.
 """
 
-from dash import Dash #,  dcc
+from dash import Dash, dcc
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 import pandas as pd
@@ -14,7 +14,7 @@ def create_dash_app(df: pd.DataFrame) -> Dash:
     """
     Create and configure a Dash application for baby feeding schedule visualization.
 
-    Parameters:    
+    Args:    
         df : pd.DataFrame
             insert details
 
@@ -42,7 +42,7 @@ def create_dash_app(df: pd.DataFrame) -> Dash:
     app.layout = dbc.Container([
 
             # Store the data as JSON in the browser/app state
-#            dcc.Store(id="main-data", data=df.to_json(orient="records")),
+            dcc.Store(id="main-data", data=df.to_json(orient="records")),
 
             dbc.Tabs([
 
