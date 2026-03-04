@@ -70,8 +70,8 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
                                 dbc.RadioItems(
                                     options=[
                                         {"label": "All courses", "value": "all"},
-                                        {"label": "18 hole courses", "value": "18 hole"},
-                                        {"label": "9 hole courses", "value": "9 hole"},
+                                        {"label": "18 hole courses only", "value": "18 hole"},
+                                        {"label": "9 hole courses only", "value": "9 hole"},
                                     ],
                                     value="all",
                                     id="radioitems-inline-input",
@@ -170,4 +170,8 @@ def update_course_types(course_type, main_data):
     top_courses = get_top_bottom_courses(filtered_df, top=True)
     bottom_courses = get_top_bottom_courses(filtered_df, top=False)
 
-    return golf_map, f"1. {top_courses[0]}", f"2. {top_courses[1]}", f"3. {top_courses[2]}", f"4. {top_courses[3]}", f"5. {top_courses[4]}", f"1. {bottom_courses[0]}", f"2. {bottom_courses[1]}", f"3. {bottom_courses[2]}", f"4. {bottom_courses[3]}", f"5.   {bottom_courses[4]}"
+    return (golf_map,
+            f"1. {top_courses[0]}", f"2. {top_courses[1]}", f"3. {top_courses[2]}",
+            f"4. {top_courses[3]}", f"5. {top_courses[4]}",
+            f"1. {bottom_courses[0]}", f"2. {bottom_courses[1]}", f"3. {bottom_courses[2]}",
+            f"4. {bottom_courses[3]}", f"5.   {bottom_courses[4]}")

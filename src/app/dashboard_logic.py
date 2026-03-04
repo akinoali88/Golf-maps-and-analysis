@@ -162,6 +162,8 @@ def create_course_badges(
         "border-top border-bottom border-end"
     )
 
+    subtle_badge_class = f"bg-{header_colour}-subtle text-{header_colour}-emphasis border-{header_colour} border-subtle"
+
     return  dbc.Row([
     # Label Column with Success background
     dbc.Col(
@@ -177,7 +179,7 @@ def create_course_badges(
                 id=f"{badge_id}_course_{i}",
                 color="light",
                 text_color="dark",
-                className="ms-2 border shadow-sm"
+                className=f"ms-2 border shadow-sm {subtle_badge_class}"
             ) for i, course in enumerate(courses, 1) # '1' tells it to start counting at 1
         ], className=badge_class)
             ],
@@ -208,6 +210,6 @@ def get_top_bottom_courses(df,count=5, top=True):
 
     # Return the formatted list of strings
     return [
-        f"{course} ({score:.1f})"
+        f"{course} ({score:+.1f})"
         for course, score in subset[["course", "avg_over_par"]].itertuples(index=False, name=None)
     ]
