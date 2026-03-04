@@ -74,7 +74,7 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
                                         {"label": "9 hole courses only", "value": "9 hole"},
                                     ],
                                     value="all",
-                                    id="radioitems-inline-input",
+                                    id="radioitems-course-type",
                                     inline=True,
                                     # "d-flex" here helps if the buttons themselves are misaligned
                                     className="d-flex align-items-center"
@@ -126,7 +126,7 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
     Output("bottom_course_badges_course_3", "children"),
     Output("bottom_course_badges_course_4", "children"),
     Output("bottom_course_badges_course_5", "children")],
-    [Input("radioitems-inline-input", "value"),
+    [Input("radioitems-course-type", "value"),
      Input("main-data", "data")]
 )
 def update_course_types(course_type, main_data):
