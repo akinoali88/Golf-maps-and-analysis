@@ -47,7 +47,6 @@ def create_stat_card(title: str,
         width=width
     )
 
-
 def create_page_header(header_title: str,
                        subtitle: str,
                        footer_text: str ="",
@@ -116,7 +115,6 @@ def create_page_header(header_title: str,
     className="shadow-sm border-0 mb-3 mt-3",
     style={"borderRadius": "10px"}
     )
-
 
 def create_course_badges(
         header_title: str,
