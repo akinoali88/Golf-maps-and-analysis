@@ -162,7 +162,8 @@ def create_course_badges(
         "border-top border-bottom border-end"
     )
 
-    subtle_badge_class = f"bg-{header_colour}-subtle text-{header_colour}-emphasis border-{header_colour} border-subtle"
+    subtle_badge_class = (f"bg-{header_colour}-subtle text-{header_colour}"
+                          f"-emphasis border-{header_colour} border-subtle")
 
     return  dbc.Row([
     # Label Column with Success background
