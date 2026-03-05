@@ -56,7 +56,7 @@ def validate_data(df: pd.DataFrame,
             record = basemodel(**record_dict)
 
             # ensures enum values serialized to str by using json mode
-            valid_records.append(record.model_dump(mode="python"))
+            valid_records.append(record.model_dump(mode="json"))
 
         except ValidationError as e:
 
