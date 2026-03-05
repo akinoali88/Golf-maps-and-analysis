@@ -1,6 +1,6 @@
-''' Module for processing data files including loading, cleaning, and validating.
+""" Module for processing data files including loading, cleaning, and validating.
 Steps orchestrated within the DataProcessor class.
-'''
+"""
 
 import pandas as pd
 
@@ -67,12 +67,12 @@ def process_golf_courses(df: pd.DataFrame,
 
 def process_golf_rounds(df: pd.DataFrame) -> pd.DataFrame:
 
-    '''
+    """
     Validates the integrity of golf round data by checking for duplicates.
 
     This function performs two checks:
     1. Identifies identical rows across all columns.
-    2. Identifies collisions where the 'Round Number' is repeated across 
+    2. Identifies collisions where the "Round Number" is repeated across 
        different entries. 
        
     Warnings and the offending rows are printed to the console if 
@@ -80,12 +80,12 @@ def process_golf_rounds(df: pd.DataFrame) -> pd.DataFrame:
 
     Args:
         df (pd.DataFrame): The DataFrame containing golf round data. 
-            Expected to have a 'Round Number' column.
+            Expected to have a "Round Number" column.
 
     Returns:
         pd.DataFrame: The original DataFrame, unchanged.
 
-    '''
+    """
 
     duplicate_counter = 0
 
