@@ -1,6 +1,6 @@
-'''
+"""
 Render the home tab for ....
-'''
+"""
 
 from io import StringIO
 
@@ -105,7 +105,7 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
                                 figure=initial_fig,
                                 config={"displayModeBar": False},
                                 style={"height": "500px", "marginTop": "-2.5px"},
-                                )
+                                ),
                                     ],)
                             ], className="shadow-sm mb-2")
                         ], width=12)
@@ -161,10 +161,10 @@ def update_course_types(course_type, main_data):
             filtered_df = df
 
         case "18 hole":
-            filtered_df = df[df['course_type'] == "18 hole"]
+            filtered_df = df[df["course_type"] == "18 hole"]
 
         case "9 hole":
-            filtered_df = df[df['course_type'].isin(["9 hole", "9 hole - par 3 course"])]
+            filtered_df = df[df["course_type"].isin(["9 hole", "9 hole - par 3 course"])]
 
     golf_map = map_golf_courses(filtered_df)
     top_courses = get_top_bottom_courses(filtered_df, top=True)
