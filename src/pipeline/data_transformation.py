@@ -53,3 +53,22 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
         right_on="course_name").drop(columns=["course_name"])
 
     return course_round_summary
+
+def transform_round_summaries(golf_rounds: pd.DataFrame) -> pd.DataFrame:
+
+    """
+    Transforms the golf rounds data to prepare for time series analysis and visualisation.
+    
+    Args:
+        golf_rounds (pd.DataFrame): DataFrame containing golf rounds data, 
+            validated with the GolfRounds pydantic basemodel class
+    Returns:
+        pd.DataFrame: Transformed DataFrame with additional time-based features.
+    """
+
+    # Get effective score over par per round,
+    # normalised to 18 holes to allow for comparison across rounds of different lengths
+    golf_rounds["effective scove over par"] = (
+        golf_rounds["over_par"] / golf_rounds["holes_played"] * 18)
+
+    return golf_rounds
