@@ -14,20 +14,26 @@ def create_dash_app(course_df: pd.DataFrame,
                     round_df: pd.DataFrame
                     ) -> Dash:
     """
-    Create and configure a Dash application for baby feeding schedule visualization.
+    Initializes and configures the Dash application for golf performance analysis.
 
-    Args:    
-        df : pd.DataFrame
-            insert details
+    This factory function sets up the Dash instance, applies Bootstrap theming, 
+    and constructs a multi-tab layout. Data is serialized to JSON and stored 
+    client-side in dcc.Store components to facilitate interactive filtering.
 
+    Args:
+        course_df (pd.DataFrame): Geospatial and metadata for golf courses 
+            (e.g., coordinates, course names).
+        round_df (pd.DataFrame): Historical round data, including scores, 
+            dates, and performance metrics per course.
 
     Returns:
-        Dash
-            Configured Dash application instance with interactive layout, callbacks, and graphs.
+        Dash: A configured Dash application object ready to be run via .run_server().
 
     Notes:
-        - Home page contains a map of all courses played at
-        - A second page showing invidivudal stats by course over time
+        - The app uses the 'spacelab' Bootstrap theme for consistent styling.
+        - Tab 1: 'Location Maps' renders geospatial visualizations of courses.
+        - Tab 2: 'Performance History' displays statistical trends over time.
+        - Tab 3: 'Course Metrics' provides granular breakdown of play data. 
     """
 
     # load bootstrap figure templates
@@ -59,14 +65,14 @@ def create_dash_app(course_df: pd.DataFrame,
                 # --- Course History ---
                 dbc.Tab([
                     render_page2(round_df)],
-                    label="Performance",
+                    label="Performance History",
                     label_class_name="bg-primary-subtle text-grey",
                     ),
 
                 # --- etc ---
                 dbc.Tab([
                     render_page3()],
-                    label="Course History",
+                    label="Course Metrics",
                     label_class_name="bg-primary-subtle text-grey",
                         ),
                     ]) # Close dcc.Tabs
