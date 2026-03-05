@@ -152,7 +152,7 @@ class GolfRounds(BaseModel):
     date: date
     year: int = Field(ge=2016, le=datetime.now().year)
     format: GameFormat
-    holes: int
+    holes_played: int = Field(alias="Holes")
     score: int
     over_par: int
 
