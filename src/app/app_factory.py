@@ -10,7 +10,9 @@ import pandas as pd
 from src.app.components import render_home_tab, render_page2, render_page3
 
 
-def create_dash_app(df: pd.DataFrame) -> Dash:
+def create_dash_app(course_df: pd.DataFrame,
+                    round_df: pd.DataFrame
+                    ) -> Dash:
     """
     Create and configure a Dash application for baby feeding schedule visualization.
 
@@ -42,20 +44,21 @@ def create_dash_app(df: pd.DataFrame) -> Dash:
     app.layout = dbc.Container([
 
             # Store the data as JSON in the browser/app state
-            dcc.Store(id="main-data", data=df.to_json(orient="records")),
+            dcc.Store(id="main-data", data=course_df.to_json(orient="records")),
+            dcc.Store(id="round-data", data=round_df.to_json(orient="records")),
 
             dbc.Tabs([
 
                 # --- Home page tab ---
                 dbc.Tab([
-                    render_home_tab(df)],
+                    render_home_tab(course_df)],
                     label="Location Maps",
                     label_class_name="bg-primary-subtle text-grey",
                     ),
 
                 # --- Course History ---
                 dbc.Tab([
-                    render_page2()],
+                    render_page2(round_df)],
                     label="Performance",
                     label_class_name="bg-primary-subtle text-grey",
                     ),
