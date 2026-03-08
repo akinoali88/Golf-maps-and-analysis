@@ -160,7 +160,7 @@ def plot_score_over_time(df: pd.DataFrame,
         ),
 
         coloraxis_colorbar=dict(
-            title="<b>Effectice Score<br>Over Par</b>",
+            title="<b>Effective Score<br>Over Par</b>",
             tickformat="+d",  # Always show the + or - sign
             len=0.8           # Shortens it slightly so it doesn't crowd the margins
         ),
@@ -177,16 +177,44 @@ def plot_score_over_time(df: pd.DataFrame,
             "Over Par: %{customdata[2]:+d}",
             "%{customdata[3]}",    # Effective score label only visible for non-18 hole rounds
             ]),
-        )
+        marker=dict(
+            line=dict(
+                width=1,
+                color='DarkSlateGrey' # Or 'white' if you want them to pop more
+                ),
+            ),
+    )
 
     trendline_hovertemplate = (
         f"<b>Rolling {rolling_window} round average score</b><br>" +
         "Rolling average score: +%{y:.1f}<br>")
 
-    # Update trendline hovertemplate
+    # Update trendline hovertemplate for rolling average
     fig.update_traces(
         selector=dict(mode="lines"),
         hovertemplate=trendline_hovertemplate)
+
+    # Add Rolling Best Line (Lower is better in golf, so usually Green)
+    fig.add_scatter(
+        x=df['date'],
+        y=df['rolling_best'],
+        mode='lines',
+        name=f'{rolling_window}-Round Best',
+        line=dict(color='rgba(40, 167, 69, 0.4)', width=2, dash='dot'), # Translucent green
+        hovertemplate=f"Rolling {rolling_window}-Round Best: %{{y:+d}}<extra></extra>"
+    )
+
+    # Add Rolling Worst Line (Higher is worse, so usually Red)
+    fig.add_scatter(
+        x=df['date'],
+        y=df['rolling_worst'],
+        mode='lines',
+        fill='tonexty',
+        name=f'{rolling_window}-Round Worst',
+        fillcolor='rgba(220, 53, 69, 0.05)', # Very light green fill
+        line=dict(color='rgba(220, 53, 69, 0.4)', width=2, dash='dot'), # Translucent red
+        hovertemplate=f"Rolling {rolling_window}-Round Worst: %{{y:+d}}<extra></extra>"
+    )
 
     # Add light box around axes
     fig.update_xaxes(showline=True, linewidth=.5, linecolor="lightgrey", mirror=True)

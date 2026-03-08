@@ -55,7 +55,8 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
     return course_round_summary
 
 def transform_round_summaries(golf_rounds: pd.DataFrame,
-                              golf_course: pd.DataFrame
+                              golf_course: pd.DataFrame,
+                              rolling_window: int = 10,
                               ) -> pd.DataFrame:
 
     """
@@ -90,5 +91,14 @@ def transform_round_summaries(golf_rounds: pd.DataFrame,
         if x['holes_played'] != 18 else "",
         axis=1
         )
+
+    # Sort by date to ensure the rolling window makes sense chronologically
+    golf_rounds = golf_rounds.sort_values("date")
+
+    # Calculate rolling metrics
+    golf_rounds['rolling_best'] = (golf_rounds['effective scove over par'].
+                                   rolling(window=rolling_window).min())
+    golf_rounds['rolling_worst'] = (golf_rounds['effective scove over par'].
+                                    rolling(window=rolling_window).max())
 
     return golf_rounds
