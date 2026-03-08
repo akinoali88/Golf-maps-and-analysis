@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from src.pipeline.data_handler import load_source_data
 from src.pipeline.data_processing import process_golf_courses, process_golf_rounds
-from src.pipeline.data_transformation import generate_course_summaries
+from src.pipeline.data_transformation import generate_course_summaries, transform_round_summaries
 from src.pipeline.data_validation import validate_data
 from src.pipeline.geocoding import enrich_golf_course_addresses
 from src.models.model import GolfCourse, GolfRounds
@@ -57,10 +57,9 @@ validated_gr_df, errors = validate_data(
     )
 
 # Step 3: Prepare output metrics
-golf_round_summary = generate_course_summaries(validated_gr_df, validated_gc_df)
-
-
+course_summaries = generate_course_summaries(validated_gr_df, validated_gc_df)
+round_summaries = transform_round_summaries(validated_gr_df, validated_gc_df)
 
 # Step 4: Create Dash app
-app = create_dash_app(golf_round_summary, validated_gr_df)
+app = create_dash_app(course_summaries, round_summaries)
 app.run(debug=True, use_reloader=False, port=8052)

@@ -8,8 +8,8 @@ Render 2nd page
 from dash import dcc
 import dash_bootstrap_components as dbc
 import pandas as pd
-import plotly.express as px
 from src.app.dashboard_logic import create_page_header
+from src.app.base_graphs import plot_score_over_time
 
 
 def render_page2(df: pd.DataFrame) -> dbc.Container:
@@ -35,12 +35,7 @@ def render_page2(df: pd.DataFrame) -> dbc.Container:
     """
 
 
-    initial_fig = px.scatter(df,
-                             x="date",
-                             y="over_par",
-                             trendline='rolling',
-                             trendline_options=dict(window=5),
-                             title='Score over par over time')
+    initial_fig = plot_score_over_time(df)
 
     return dbc.Container([
 
@@ -59,8 +54,7 @@ def render_page2(df: pd.DataFrame) -> dbc.Container:
                 style={"height": "500px", "marginTop": "-2.5px"},
                 ),
 
-            # Deteail breakdown
-            'Some charts showing performance over time....'
+            # Detail breakdown
             ], fluid=True) # Close Container
 
 # @callback(

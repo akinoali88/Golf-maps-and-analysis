@@ -54,7 +54,9 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
 
     return course_round_summary
 
-def transform_round_summaries(golf_rounds: pd.DataFrame) -> pd.DataFrame:
+def transform_round_summaries(golf_rounds: pd.DataFrame,
+                              golf_course: pd.DataFrame
+                              ) -> pd.DataFrame:
 
     """
     Transforms the golf rounds data to prepare for time series analysis and visualisation.
@@ -62,13 +64,31 @@ def transform_round_summaries(golf_rounds: pd.DataFrame) -> pd.DataFrame:
     Args:
         golf_rounds (pd.DataFrame): DataFrame containing golf rounds data, 
             validated with the GolfRounds pydantic basemodel class
+
+        golf_courses (pd.DataFrame): DataFrame containing golf course data, 
+            validated with the GolfCourse pydantic basemodel class
     Returns:
         pd.DataFrame: Transformed DataFrame with additional time-based features.
     """
+
+    # Get course type
+    golf_rounds = golf_rounds.merge(
+        golf_course[["course_name", "course_type"]],
+        left_on="course",
+        right_on="course_name",
+        how="left").drop(columns=["course_name"])
 
     # Get effective score over par per round,
     # normalised to 18 holes to allow for comparison across rounds of different lengths
     golf_rounds["effective scove over par"] = (
         golf_rounds["over_par"] / golf_rounds["holes_played"] * 18)
+
+    # Create the conditional label for Effective Score
+    # only applicable for rounds with less than 18 holes played
+    golf_rounds['eff_score_label'] = golf_rounds.apply(
+        lambda x: f"Effective Over Par: {x['effective scove over par']:+.1f}"
+        if x['holes_played'] != 18 else "",
+        axis=1
+        )
 
     return golf_rounds
