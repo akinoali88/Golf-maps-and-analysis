@@ -103,7 +103,9 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
 
     return fig
 
-def plot_score_over_time(df: pd.DataFrame) -> Figure:
+def plot_score_over_time(df: pd.DataFrame,
+                         rolling_window: int = 10,
+                         ) -> Figure:
 
     """
     Docstring for plot_score_over_time
@@ -122,7 +124,7 @@ def plot_score_over_time(df: pd.DataFrame) -> Figure:
                      symbol="course_type",
                      color="effective scove over par",
                      trendline="rolling",
-                     trendline_options=dict(window=10),
+                     trendline_options=dict(window=rolling_window),
                      trendline_scope="overall",
                      color_continuous_scale="RdYlGn_r",
                      labels={
@@ -172,9 +174,22 @@ def plot_score_over_time(df: pd.DataFrame) -> Figure:
             "Date: %{x}",
             "Holes played: %{customdata[0]}",
             "Score: %{customdata[1]}",
-            "Over Par: %{customdata[2]}",
+            "Over Par: %{customdata[2]:+d}",
             "%{customdata[3]}",    # Effective score label only visible for non-18 hole rounds
-            ])
+            ]),
         )
+
+    trendline_hovertemplate = (
+        f"<b>Rolling {rolling_window} round average score</b><br>" +
+        "Rolling average score: +%{y:.1f}<br>")
+
+    # Update trendline hovertemplate
+    fig.update_traces(
+        selector=dict(mode="lines"),
+        hovertemplate=trendline_hovertemplate)
+
+    # Add light box around axes
+    fig.update_xaxes(showline=True, linewidth=.5, linecolor="lightgrey", mirror=True)
+    fig.update_yaxes(showline=True, linewidth=.5, linecolor="lightgrey", mirror=True)
 
     return fig
