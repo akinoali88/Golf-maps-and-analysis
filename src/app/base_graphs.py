@@ -51,8 +51,6 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
             }
         )
 
-    fig.update_layout()
-
     # Update trace to position text
     fig.update_traces(
         textposition="bottom right",
@@ -62,6 +60,7 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
                 ),
     )
 
+    # Update color axis to adjust colorbar title and position
     fig.update_coloraxes(
         colorbar=dict(
             title=dict(text="<b>Average Score<br>Over Par</b>",
@@ -71,6 +70,7 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
         )
     )
 
+    # Add annotation to explain circle size
     fig.add_annotation(
         text="○ Circle size denotes number of rounds",
         xref="paper", yref="paper",
@@ -84,6 +84,7 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
         opacity=0.8
     )
 
+    # Update hovertemplate for datapoints
     fig.update_traces(
         hovertemplate="<br>".join([
             "<b>%{hovertext}</b>",
@@ -97,14 +98,36 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
         ])
     )
 
+    # Update map style and prevent points from overlapping
     fig.update_layout(
         map_style="carto-voyager-nolabels",
         scattermode="group")    # Prevent points from overlapping
+
+    # Add light box around map area
+    fig.update_layout(
+        shapes=[
+            dict(
+                type="rect",
+                xref="paper",
+                yref="paper",
+                x0=0,
+                y0=0,
+                x1=1,
+                y1=1,
+                line=dict(
+                    color="lightgrey",
+                    width=2,
+                ),
+            )
+        ],
+        #margin=dict(l=10, r=10, t=10, b=10) # Optional: adds a tiny bit of breathing room
+)
 
     return fig
 
 def plot_score_over_time(df: pd.DataFrame,
                          rolling_window: int = 10,
+                         min_periods: int = 2
                          ) -> Figure:
 
     """
@@ -124,7 +147,7 @@ def plot_score_over_time(df: pd.DataFrame,
                      symbol="course_type",
                      color="effective scove over par",
                      trendline="rolling",
-                     trendline_options=dict(window=rolling_window),
+                     trendline_options=dict(window=rolling_window, min_periods=min_periods),
                      trendline_scope="overall",
                      color_continuous_scale="RdYlGn_r",
                      labels={
@@ -168,6 +191,7 @@ def plot_score_over_time(df: pd.DataFrame,
         margin=dict(t=80)
     )
 
+    # Update hovertemplate for scatter points
     fig.update_traces(
         hovertemplate="<br>".join([
             "<b>%{hovertext}</b>",
@@ -194,12 +218,18 @@ def plot_score_over_time(df: pd.DataFrame,
         selector=dict(mode="lines"),
         hovertemplate=trendline_hovertemplate)
 
+    # Update trendline name to reflect rolling window size
+    # We use a loop to find the trendline safely in case the order changes
+    for trace in fig.data:
+        if "trend" in trace.name.lower() or "rolling" in trace.name.lower():
+            trace.name = f"{rolling_window}-Round Rolling Average Score"
+
     # Add Rolling Best Line (Lower is better in golf, so usually Green)
     fig.add_scatter(
         x=df['date'],
         y=df['rolling_best'],
         mode='lines',
-        name=f'{rolling_window}-Round Best',
+        name=f'{rolling_window}-Round Rolling Best Score',
         line=dict(color='rgba(40, 167, 69, 0.4)', width=2, dash='dot'), # Translucent green
         hovertemplate=f"Rolling {rolling_window}-Round Best: %{{y:+d}}<extra></extra>"
     )
@@ -210,7 +240,7 @@ def plot_score_over_time(df: pd.DataFrame,
         y=df['rolling_worst'],
         mode='lines',
         fill='tonexty',
-        name=f'{rolling_window}-Round Worst',
+        name=f'{rolling_window}-Round Rolling Worst Score',
         fillcolor='rgba(220, 53, 69, 0.05)', # Very light green fill
         line=dict(color='rgba(220, 53, 69, 0.4)', width=2, dash='dot'), # Translucent red
         hovertemplate=f"Rolling {rolling_window}-Round Worst: %{{y:+d}}<extra></extra>"
