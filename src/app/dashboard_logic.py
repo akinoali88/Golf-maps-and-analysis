@@ -205,7 +205,7 @@ def get_top_bottom_courses(df,count=5, top=True):
 
     # Determine if we want the top or bottom of the sorted list
     subset = (df.sort_values("avg_over_par").head(count) if top
-                else df.sort_values("avg_over_par").tail(count))
+                else df.sort_values("avg_over_par", ascending=False).head(count))
 
     # Return the formatted list of strings
     return [
