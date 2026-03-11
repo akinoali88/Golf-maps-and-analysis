@@ -161,9 +161,12 @@ class GolfRounds(BaseModel):
 
 class RoundPerformance(BaseModel):
 
-    '''
+    """
     Add performance indicators to golf round data
-    '''
+
+    This is kept separate from the base GolfRounds model to allow for flexibiliy where users
+    may not have performance data
+    """
 
     round_number: int = Field(ge=1)
 

@@ -15,23 +15,25 @@ from src.app.base_graphs import plot_score_over_time
 def render_page2(df: pd.DataFrame) -> dbc.Container:
 
     """
-    This function constructs the layout for
+    Constructs the 'Performance History' layout for the dashboard.
 
-    Parameters:
-        df: pd.DataFrame
-            DataFrame containing 
+    This page focuses on the longitudinal analysis of golf scores, providing 
+    a visual timeline of golf scores since 2016.
+
+    Args:
+        df (pd.DataFrame): The validated golf dataset containing date-indexed 
+            scoring data required for time-series plotting.
         
     Returns:
-        dbc.Container
-            A Bootstrap container component containing the complete home tab layout with:
-            - a
-            - b 
+        dbc.Container: A fluid Bootstrap container comprising:
+            - A standardized page header with performance-themed iconography.
+            - An interactive time-series line chart (dcc.Graph) showing score 
+              trends over the years.
             
     Notes:
-        The component uses Dash Bootstrap Components for responsive layout and
-        styling. Chart interactions and statistics updates are handled via Dash callbacks
-        using the component IDs defined in this function.
-
+        The layout utilizes Dash Bootstrap Components (DBC) for a responsive 
+        grid system. The 'score-over-time' graph is initialized here but can 
+        be further manipulated via Dash callbacks using its component ID.
     """
 
 
@@ -56,11 +58,3 @@ def render_page2(df: pd.DataFrame) -> dbc.Container:
 
             # Detail breakdown
             ], fluid=True) # Close Container
-
-# @callback(
-#     )
-# def update_individual_violin(args):
-
-#     '''Input callback to update '''
-
-#     return

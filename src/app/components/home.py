@@ -14,22 +14,27 @@ from src.app.base_graphs import map_golf_courses
 def render_home_tab(df: pd.DataFrame) -> dbc.Container:
 
     """
-    This function constructs the main dashboard layout for 
+    Constructs the primary dashboard layout for the 'Home' tab.
 
-    Args:
-        df: pd.DataFrame
-            DataFrame containing golf course data with columns validated
-            via data pipeline.
+        This function aggregates high-level stats and assembles the layout components, 
+        including the page header, filtering controls, performance leaderboards, 
+        and the geographic map of golf courses.
 
-    Returns:
-        dbc.Container
-            A Bootstrap container component containing the complete home tab layout with:
-            - a
-            - b    
-    Notes:
-        The component uses Dash Bootstrap Components for responsive layout and
-        styling. Chart interactions and statistics updates are handled via Dash callbacks
-        using the component IDs defined in this function.
+        Args:
+            df (pd.DataFrame): The processed golf dataset. Must contain 'number_of_rounds' 
+                and columns required by 'map_golf_courses' and 'get_top_bottom_courses'.
+
+        Returns:
+            dbc.Container: A fluid Bootstrap container containing:
+                - A dynamic header displaying total rounds played.
+                - Radio buttons for filtering data by course type (18-hole vs 9-hole).
+                - Top 5 and Bottom 5 performance badges (avg vs. par).
+                - An interactive Plotly map centered on course locations.
+
+        Notes:
+            The layout relies on Dash Bootstrap Components (DBC) for responsiveness. 
+            Interactive elements are linked to the `update_course_types` callback via 
+            component IDs.
 
     """
 
@@ -132,23 +137,24 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
 def update_course_types(course_type, main_data):
 
     """
-    Filters golf course data by type and generates updated map and ranking components.
+    Filters the golf dataset and updates the map and leaderboard badges.
 
-    This function deserializes a JSON string into a DataFrame, filters the courses 
-    based on the provided 'course_type' category, and then invokes helper functions 
-    to produce a geographic visualization and statistical rankings.
+    Triggered when the user changes the course type radio buttons or when the 
+    underlying client-side data store is updated. It performs data filtering 
+    and re-calculates the top/bottom 5 venues.
 
     Args:
-        course_type (str): The category of golf course to filter by. 
-            Expected values: "all", "18 hole", "9 hole", or "9 hole - par 3 course".
-        main_data (str): A JSON-formatted string containing the golf course records 
-            (must be compatible with pd.read_json(orient='records')).
+        course_type (str): The filter category selected ("all", "18 hole", or "9 hole").
+        main_data (str): JSON-serialized DataFrame from the dcc.Store component.
 
     Returns:
-        tuple: A triplet containing:
-            - golf_map (obj): The output from map_golf_courses (typically a Figure or HTML).
-            - top_courses (pd.DataFrame): The highest-rated courses based on the filter.
-            - bottom_courses (pd.DataFrame): The lowest-rated courses based on the filter.
+        tuple: A collection of 11 elements matching the callback Outputs:
+            - [0]: plotly.graph_objects.Figure: The updated geographic map.
+            - [1-5]: str: Formatted strings for the Top 5 course badges.
+            - [6-10]: str: Formatted strings for the Bottom 5 course badges.
+
+    Raises:
+        ValueError: If main_data cannot be parsed or required columns are missing.
         """
 
      # Convert stored JSON data back to DataFrame
