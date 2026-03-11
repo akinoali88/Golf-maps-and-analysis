@@ -9,12 +9,32 @@ from plotly.graph_objects import Figure
 def map_golf_courses(df: pd.DataFrame) -> Figure:
 
     """
-    Docstring for map_golf_courses
-    
-    :param df: Description
-    :type df: pd.DataFrame
-    :return: Description
-    :rtype: Figure
+    Generates an interactive geographic visualization of golf course locations.
+
+    This function maps individual courses using coordinate data, with visual 
+    encoding for both frequency of play (marker size) and scoring performance 
+    (marker color). It is specifically styled for a clean, professional dashboard 
+    look.
+
+    Args:
+        df (pd.DataFrame): The dataset containing course metadata and aggregate 
+            statistics. Required columns: 'latitude', 'longitude', 'course', 
+            'number_of_rounds', 'avg_over_par', 'par', 'avg_score', 'best_score', 
+            'course_index', and 'slope_rating'.
+
+    Returns:
+        plotly.graph_objects.Figure: A localized map (centered on SE England) 
+            featuring:
+            - Bubble markers scaled to the total number of rounds played.
+            - Diverging color scale (Red-Yellow-Green) based on average score vs. par.
+            - A 'Carto Voyager' basemap with minimal labeling for clarity.
+            - Custom legend-style annotation explaining circle size logic.
+            - Comprehensive hover tooltips including Slope Rating and Course Index.
+
+    Notes:
+        The layout uses 'scattermode="group"' to mitigate marker overlap in 
+        geographically dense areas. The color axis is intentionally reversed 
+        ('RdYlGn_r') so that lower scores (better performance) appear green.
     """
 
     fig = px.scatter_map(
@@ -131,12 +151,33 @@ def plot_score_over_time(df: pd.DataFrame,
                          ) -> Figure:
 
     """
-    Docstring for plot_score_over_time
-    
-    :param df: Description
-    :type df: pd.DataFrame
-    :return: Description
-    :rtype: Figure
+    Generates a multi-layered time-series visualization of golf performance.
+
+    The chart plots individual round scores (normalized to 18-hole 'effective' 
+    scores) and overlays statistical trends to highlight improvement or 
+    regression over time.
+
+    Args:
+        df (pd.DataFrame): The dataset containing golf rounds. Required columns 
+            include 'date', 'effective scove over par', 'course', 'holes_played', 
+            'score', 'over_par', 'eff_score_label', 'rolling_best', and 'rolling_worst'.
+        rolling_window (int, optional): The number of rounds to include in the 
+            moving average and best/worst calculations. Defaults to 10.
+        min_periods (int, optional): Minimum number of observations in window 
+            required to have a value. Defaults to 2.
+
+    Returns:
+        plotly.graph_objects.Figure: A comprehensive performance chart featuring:
+            - Scatter points colored by score (Red-Yellow-Green scale).
+            - A rolling average trendline for overall performance direction.
+            - "Best" and "Worst" boundary lines (dotted) with a light-shaded 
+              performance corridor.
+            - Custom hover tooltips with per-round details and course names.
+
+    Notes:
+        The Y-axis and color bar are formatted to always display signs (e.g., +4, -2) 
+        to maintain golf-centric reporting. The legend is positioned horizontally 
+        above the chart for better mobile responsiveness.
     """
 
     fig = px.scatter(df,
