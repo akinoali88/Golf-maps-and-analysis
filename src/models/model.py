@@ -5,7 +5,7 @@ Create pydantic model
 
 from enum import Enum
 import re
-from typing import ClassVar
+from typing import ClassVar, Union, Literal, Annotated
 from datetime import datetime, date
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic_extra_types.coordinate import Longitude, Latitude
@@ -131,7 +131,6 @@ class GolfCourse(BaseModel):
     # set label for class for reporting
     label: ClassVar[str] = 'golf courses'
 
-
 class GolfRounds(BaseModel):
 
     """
@@ -140,7 +139,6 @@ class GolfRounds(BaseModel):
     will be validated with an additional basemodel for performance
     """
 
-    # Allow extra types at this stage
     model_config = ConfigDict(
         extra='ignore',
         alias_generator=snake_to_space_title,
@@ -168,7 +166,34 @@ class RoundPerformance(BaseModel):
     may not have performance data
     """
 
+    model_config = ConfigDict(
+        alias_generator=snake_to_space_title,
+        populate_by_name=True)
+
     round_number: int = Field(ge=1)
+
+    # optional as driving not required for all courses (e.g., par 3 courses)
+    driving: Union[
+        Annotated[int, Field(ge=0, le=10)],
+        Literal["not recorded"]] = Field(default="not recorded")
+    duff_drives: float = Field(ge=0)
+    irons: float = Field(ge=0, le=10)
+    inside_100_yards: float = Field(ge=0, le=10)
+    chipping: float = Field(ge=0, le=10)
+    shots_lost_in_bunkers: int = Field(ge=0)
+    putting: float = Field(ge=0, le=10)
+
+    # Optional stats not availabl for all rounds
+    duff_shots: Union[
+        Annotated[float, Field(ge=0)],
+        Literal["not recorded"]] = Field(default="not recorded")
+    triple_bogeys: Union[
+        Annotated[float, Field(ge=0)],
+        Literal["not recorded"]] = Field(default="not recorded")
+    scores_of_8_plus: Union[
+        Annotated[float, Field(ge=0)],
+        Literal["not recorded"]
+    ] = Field(default="not recorded", alias="Scores of 8+")
 
     # set label for class for reporting
     label: ClassVar[str] = 'golf round performance'
