@@ -29,7 +29,6 @@ class GameFormat(str, Enum):
     SCRAMBLE = 'Scramble'
     WILD_GOLF = 'Wild Golf'
 
-
 def snake_to_space_title(field_name: str) -> str:
 
     """
@@ -83,7 +82,29 @@ class GolfCourse(BaseModel):
     course_index: float
     slope_rating: int = Field(ge=55, le=155)
 
+    # Check that for par 3 courses, par is 27
+    @model_validator(mode='after')
+    def validator_par_for_course_type(self):
 
+        """
+        Validates that par for par 3 courses is 27
+        """
+
+        if self.course_type == GolfCourseTypes.NINE_HOLE_PAR_3 and self.par != 27:
+            raise ValueError(
+                f"For a 9 Hole Par 3 course, par must be 27. Received: {self.par}")
+
+        if self.course_type == GolfCourseTypes.NINE_HOLE and not 28 <= self.par <= 37:
+            raise ValueError(
+                f"For a 9 Hole course, par must be between 28 and 37. Received: {self.par}")
+
+        if self.course_type == GolfCourseTypes.EIGHTEEN_HOLE and not 68 <= self.par <= 74:
+            raise ValueError(
+                f"For an 18 Hole course, par must be between 68 and 74. Received: {self.par}")
+
+        return self
+
+    # Check that post code format is consistent with country standard
     @model_validator(mode='after')
     def check_postcode_by_country(self):
 
