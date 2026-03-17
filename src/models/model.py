@@ -207,6 +207,8 @@ class RoundPerformance(BaseModel):
     driving: Union[
         RankScore,
         Literal["not recorded"]] = Field(default="not recorded")
+    
+    # Required fields for all rounds
     duff_drives: Count
     irons: RankScore
     inside_100_yards: RankScore
@@ -214,7 +216,7 @@ class RoundPerformance(BaseModel):
     shots_lost_in_bunkers: Count
     putting: RankScore
 
-    # Optional stats not availabl for all rounds
+    # Optional stats not available for all rounds
     duff_shots: OptionalCount = "not recorded"
     triple_bogeys: OptionalCount = "not recorded"
     scores_of_8_plus: OptionalCount = Field(default="not recorded", alias="Scores of 8+")
