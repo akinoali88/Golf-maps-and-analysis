@@ -114,7 +114,6 @@ def build_clean_address(components: List[Dict[str, Any]]) -> Optional[str]:
     # Filter out empty strings and join with commas
     return ", ".join([part for part in full_address_list if part])
 
-
 def calculate_confidence(result: Dict[str, Any],
                          search_query: str = "",
                          target_types: List[str] = None,

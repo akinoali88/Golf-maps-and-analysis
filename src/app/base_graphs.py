@@ -280,15 +280,21 @@ def plot_score_over_time(df: pd.DataFrame,
         x=df['date'],
         y=df['rolling_worst'],
         mode='lines',
-        fill='tonexty',
+       fill='tonexty',
         name=f'{rolling_window}-Round Rolling Worst Score',
-        fillcolor='rgba(220, 53, 69, 0.05)', # Very light green fill
+       fillcolor='rgba(220, 53, 69, 0.05)', # Very light green fill
         line=dict(color='rgba(220, 53, 69, 0.4)', width=2, dash='dot'), # Translucent red
         hovertemplate=f"Rolling {rolling_window}-Round Worst: %{{y:+d}}<extra></extra>"
     )
 
     # Add light box around axes
     fig.update_xaxes(showline=True, linewidth=.5, linecolor="lightgrey", mirror=True)
-    fig.update_yaxes(showline=True, linewidth=.5, linecolor="lightgrey", mirror=True)
+    fig.update_yaxes(showline=True,
+                     linewidth=.5,
+                     linecolor="lightgrey",
+                     mirror=True,
+                     gridwidth=0.25,
+                     gridcolor='lightgrey',
+                     griddash='dot')
 
     return fig

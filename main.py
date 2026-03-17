@@ -10,7 +10,7 @@ from src.pipeline.data_processing import process_golf_courses, process_golf_roun
 from src.pipeline.data_transformation import generate_course_summaries, transform_round_summaries
 from src.pipeline.data_validation import validate_data
 from src.pipeline.geocoding import enrich_golf_course_addresses
-from src.models.model import GolfCourse, GolfRounds
+from src.models.model import GolfCourse, GolfRounds, RoundPerformance
 from src.app.app_factory import create_dash_app
 
 
@@ -41,7 +41,7 @@ enriched_gc_df = enrich_golf_course_addresses(
 validated_gc_df, gc_errors = validate_data(enriched_gc_df, GolfCourse)
 
 # Step 2: Load, process and validate golf rounds data
-gr_df = load_source_data(file_name="golf rounds.xlsx",
+golf_rounds = load_source_data(file_name="golf rounds.xlsx",
                                 excel_params={
                                     "engine": "calamine",
                                     "sheet_name": "Rounds",
@@ -50,13 +50,19 @@ gr_df = load_source_data(file_name="golf rounds.xlsx",
                                             })
 
 
-gr_df_processed = process_golf_rounds(gr_df)
+gr_df_processed = process_golf_rounds(golf_rounds)
 validated_gr_df, errors = validate_data(
     df=gr_df_processed,
     basemodel= GolfRounds,
     )
 
-# Step 3: Prepare output metrics
+# Step 3: process and validate performance data
+validated_performance_df, performance_errors = validate_data(
+    df=gr_df_processed,
+    basemodel=RoundPerformance,
+    )
+
+# Step 4: Prepare output metrics
 course_summaries = generate_course_summaries(validated_gr_df, validated_gc_df)
 round_summaries = transform_round_summaries(validated_gr_df, validated_gc_df)
 
