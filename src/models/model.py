@@ -157,6 +157,16 @@ class GolfRounds(BaseModel):
     # set label for class for reporting
     label: ClassVar[str] = 'golf rounds'
 
+# Setup for RoundPerformance Indicators
+# Define reusable types
+
+# 1. A basic rank (0-10)
+# We use float to allow for half-points (e.g., 7.5)
+RankScore = Annotated[float, Field(ge=0, le=10)]
+Count = Annotated[int, Field(ge=0)]
+
+OptionalCount = Union[Count, Literal["not recorded"]]
+
 class RoundPerformance(BaseModel):
 
     """
@@ -174,26 +184,19 @@ class RoundPerformance(BaseModel):
 
     # optional as driving not required for all courses (e.g., par 3 courses)
     driving: Union[
-        Annotated[int, Field(ge=0, le=10)],
+        RankScore,
         Literal["not recorded"]] = Field(default="not recorded")
-    duff_drives: float = Field(ge=0)
-    irons: float = Field(ge=0, le=10)
-    inside_100_yards: float = Field(ge=0, le=10)
-    chipping: float = Field(ge=0, le=10)
-    shots_lost_in_bunkers: int = Field(ge=0)
-    putting: float = Field(ge=0, le=10)
+    duff_drives: Count
+    irons: RankScore
+    inside_100_yards: RankScore
+    chipping: RankScore
+    shots_lost_in_bunkers: Count
+    putting: RankScore
 
     # Optional stats not availabl for all rounds
-    duff_shots: Union[
-        Annotated[float, Field(ge=0)],
-        Literal["not recorded"]] = Field(default="not recorded")
-    triple_bogeys: Union[
-        Annotated[float, Field(ge=0)],
-        Literal["not recorded"]] = Field(default="not recorded")
-    scores_of_8_plus: Union[
-        Annotated[float, Field(ge=0)],
-        Literal["not recorded"]
-    ] = Field(default="not recorded", alias="Scores of 8+")
+    duff_shots: OptionalCount = "not recorded"
+    triple_bogeys: OptionalCount = "not recorded"
+    scores_of_8_plus: OptionalCount = Field(default="not recorded", alias="Scores of 8+")
 
     # set label for class for reporting
     label: ClassVar[str] = 'golf round performance'
