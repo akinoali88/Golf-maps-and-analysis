@@ -207,7 +207,7 @@ class RoundPerformance(BaseModel):
     driving: Union[
         RankScore,
         Literal["not recorded"]] = Field(default="not recorded")
-    
+
     # Required fields for all rounds
     duff_drives: Count
     irons: RankScore
