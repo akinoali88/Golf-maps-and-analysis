@@ -147,7 +147,6 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
 
 def plot_score_over_time(df: pd.DataFrame,
                          rolling_window: int = 10,
-                         min_periods: int = 2
                          ) -> Figure:
 
     """
@@ -187,9 +186,6 @@ def plot_score_over_time(df: pd.DataFrame,
                      "<sup>Relative to Par (Normalized to 18 Holes)</sup>"),
                      symbol="course_type",
                      color="effective scove over par",
-                     trendline="rolling",
-                     trendline_options=dict(window=rolling_window, min_periods=min_periods),
-                     trendline_scope="overall",
                      color_continuous_scale="RdYlGn_r",
                      labels={
                          "date": "Date of Round",
@@ -205,16 +201,24 @@ def plot_score_over_time(df: pd.DataFrame,
                      },
                                           )
 
+    chart_width = 0.8  # Chart takes up 80% of the width, leaving 20% for legend and margins
+
     # Move legend above the chart and make it horizontal
     fig.update_layout(
         legend=dict(
-            orientation="h",      # Horizontal orientation
-            yanchor="bottom",     # Anchors the legend's bottom to the 'y' coordinate
-            y=1.02,               # Places it just above the top of the chart (y=1)
-            xanchor="right",      # Anchors the right side of the legend
-            x=1                   # Aligns the right side of legend with right side of chart
+            title_text="",    # Remove default legend title since we titles by legendgroup
+            orientation="v",      # Vertical orientation
+            x=chart_width+0.02,           # Starts just after the chart ends
+            y=1,              # Align to top
+            xanchor="left",
+            yanchor="top",
+            bgcolor="rgba(0,0,0,0)",    # Transparent background to prevent overlap issues
+
+            # Adjust this number (in pixels) for more/less space between legend groups
+            tracegroupgap=40,
         ),
         xaxis=dict(
+            domain=[0, chart_width],    # Chart only takes up 70% of the width
             range=[df['date'].min(), df['date'].max()]
         ),
         yaxis=dict(
@@ -226,7 +230,9 @@ def plot_score_over_time(df: pd.DataFrame,
         coloraxis_colorbar=dict(
             title="<b>Effective Score<br>Over Par</b>",
             tickformat="+d",  # Always show the + or - sign
-            len=0.8           # Shortens it slightly so it doesn't crowd the margins
+            len=0.8,           # Shortens it slightly so it doesn't crowd the margins
+            y=1.02,
+            yanchor="top",
         ),
         # Optional: Add top margin so the legend doesn't get cut off
         margin=dict(t=80)
@@ -234,6 +240,9 @@ def plot_score_over_time(df: pd.DataFrame,
 
     # Update hovertemplate for scatter points
     fig.update_traces(
+        legendgroup="courses",
+        legendgrouptitle_text="<b>Course Types</b>",
+        selector=dict(mode="markers"),
         hovertemplate="<br>".join([
             "<b>%{hovertext}</b>",
             "Date: %{x}",
@@ -250,15 +259,6 @@ def plot_score_over_time(df: pd.DataFrame,
             ),
     )
 
-    trendline_hovertemplate = (
-        f"<b>Rolling {rolling_window} round average score</b><br>" +
-        "Rolling average score: +%{y:.1f}<br>")
-
-    # Update trendline hovertemplate for rolling average
-    fig.update_traces(
-        selector=dict(mode="lines"),
-        hovertemplate=trendline_hovertemplate)
-
     # Update trendline name to reflect rolling window size
     # We use a loop to find the trendline safely in case the order changes
     for trace in fig.data:
@@ -272,6 +272,7 @@ def plot_score_over_time(df: pd.DataFrame,
         mode='lines',
         name=f'{rolling_window}-Round Rolling Best Score',
         line=dict(color='rgba(40, 167, 69, 0.4)', width=2, dash='dot'), # Translucent green
+        legendgroup='Rolling scores',
         hovertemplate=f"Rolling {rolling_window}-Round Best: %{{y:+d}}<extra></extra>"
     )
 
@@ -280,11 +281,25 @@ def plot_score_over_time(df: pd.DataFrame,
         x=df['date'],
         y=df['rolling_worst'],
         mode='lines',
-       fill='tonexty',
+        fill='tonexty',
+        legendgroup='Rolling scores',
+        legendgrouptitle_text="<b>Rolling Average Ranges</b>",
         name=f'{rolling_window}-Round Rolling Worst Score',
-       fillcolor='rgba(220, 53, 69, 0.05)', # Very light green fill
+        fillcolor='rgba(220, 53, 69, 0.05)', # Very light green fill
         line=dict(color='rgba(220, 53, 69, 0.4)', width=2, dash='dot'), # Translucent red
         hovertemplate=f"Rolling {rolling_window}-Round Worst: %{{y:+d}}<extra></extra>"
+    )
+
+    # Add Rolling Average line (Dashed Blue)
+    fig.add_scatter(
+        x=df['date'],
+        y=df['rolling_average'],
+        mode='lines',
+        legendgroup='Rolling scores',
+        name=f'{rolling_window}-Round Rolling Average Score',
+        fillcolor='rgba(220, 53, 69, 0.05)', # Very light green fill
+        line=dict(color='rgba(220, 53, 69, 0.4)', width=2, dash='dot'), # Translucent red
+        hovertemplate=f"Rolling {rolling_window}-Round Average: %{{y:+d}}<extra></extra>"
     )
 
     # Add light box around axes
