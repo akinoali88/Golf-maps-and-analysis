@@ -101,5 +101,7 @@ def transform_round_summaries(golf_rounds: pd.DataFrame,
                                    rolling(window=rolling_window, min_periods=min_periods).min())
     golf_rounds['rolling_worst'] = (golf_rounds['effective scove over par'].
                                     rolling(window=rolling_window, min_periods=min_periods).max())
+    golf_rounds['rolling_average'] = (golf_rounds['effective scove over par'].
+                                    rolling(window=rolling_window, min_periods=min_periods).mean())
 
     return golf_rounds
