@@ -54,9 +54,6 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
                     footer_text="Data tracked and visualized using Python, Dash, and Plotly",
                     icon_class="globe-europe-africa"),
 
-            # Stat Cards
-            #'Stat cards',
-
             # Map golf courses
             dbc.Row([
                 dbc.Col([
