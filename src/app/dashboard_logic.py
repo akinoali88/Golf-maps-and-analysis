@@ -13,7 +13,7 @@ from dash import html
 def create_stat_card(title: str,
                      id_name: str,
                      text_color: str ="primary",
-                     width: int =4) -> dbc.Col:
+                     width: int = 2) -> dbc.Col:
     """
     Returns a Bootstrap Column containing a styled Card for metrics.
 
