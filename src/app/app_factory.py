@@ -71,7 +71,7 @@ def create_dash_app(course_df: pd.DataFrame,
 
                 # --- etc ---
                 dbc.Tab([
-                    render_page3()],
+                    render_page3(round_df)],
                     label="Course Metrics",
                     label_class_name="bg-primary-subtle text-grey",
                         ),
