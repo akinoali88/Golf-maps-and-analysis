@@ -2,6 +2,7 @@
 Steps orchestrated within the DataProcessor class.
 """
 
+import numpy as np
 import pandas as pd
 
 
@@ -120,5 +121,14 @@ def process_golf_rounds(df: pd.DataFrame) -> pd.DataFrame:
 
         # Print success message if no duplicates found
         print("✅ No duplicate rounds or round numbers detected.")
+
+
+    # Adjust score if full quote of holes is not played
+
+    # Create the multiplier based on a text condition
+    df['target_holes'] = np.where(df['Par'] > 38, 18, 9)
+
+    # Perform the adjustment
+    df['Score'] = (df['Score'] / df['Holes'] * df['target_holes']).round(0)
 
     return df
