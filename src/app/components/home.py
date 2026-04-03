@@ -129,7 +129,7 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
     Output("bottom_course_badges_course_4", "children"),
     Output("bottom_course_badges_course_5", "children")],
     [Input("radioitems-course-type", "value"),
-     Input("main-data", "data")]
+     Input("course-data", "data")]
 )
 def update_course_types(course_type, main_data):
 
