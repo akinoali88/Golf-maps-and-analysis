@@ -124,12 +124,12 @@ def update_output(value, course_data):
     Filters golf round data by course and calculates performance statistics.
 
     This function takes a JSON string of course data, converts it to a DataFrame, 
-    and extracts key metrics for a specific course, including total rounds 
+    and displays key metrics for a specific course, including total rounds 
     played, scoring averages, and score extremes.
 
     Args:
         value (str): The name of the course to filter the data by.
-        round_data (str): A JSON-formatted string containing the round records 
+        course_data (str): A JSON-formatted string containing the course summary records 
             (must be compatible with pandas 'records' orientation).
 
     Returns:
