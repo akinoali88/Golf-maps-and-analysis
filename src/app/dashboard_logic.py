@@ -43,7 +43,7 @@ def create_stat_card(title: str,
                 html.H2(id=id_name,
                         className=f"text-{text_color} mb-0")
             ], className="py-2")
-        ], className="text-center shadow-sm bg-secondary-subtle"),
+        ], className="text-center shadow-sm bg-info-subtle"),
         width=width
     )
 
