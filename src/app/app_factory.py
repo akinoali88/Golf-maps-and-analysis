@@ -50,7 +50,7 @@ def create_dash_app(course_df: pd.DataFrame,
     app.layout = dbc.Container([
 
             # Store the data as JSON in the browser/app state
-            dcc.Store(id="main-data", data=course_df.to_json(orient="records")),
+            dcc.Store(id="course-data", data=course_df.to_json(orient="records")),
             dcc.Store(id="round-data", data=round_df.to_json(orient="records")),
 
             dbc.Tabs([
