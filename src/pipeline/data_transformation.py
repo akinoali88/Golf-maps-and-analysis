@@ -22,16 +22,15 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
     """
 
     # Step Aggregate golf round data at course level
-
-    course_round_summary = golf_rounds.groupby("course").agg(
+    course_summary = golf_rounds.groupby("course").agg(
         course=("course", "first"),
         number_of_rounds=("course", "count"),
-        best_score=("score", "min"),
-        avg_score=("score", "mean"),
-        worst_score=("score", "max"),
-        best_over_par=("over_par", "min"),
-        avg_over_par=("over_par", "mean"),
-        worst_over_par=("over_par", "max"),
+        best_score=("effective_score", "min"),
+        avg_score=("effective_score", "mean"),
+        worst_score=("effective_score", "max"),
+        best_over_par=("effective scove over par", "min"),
+        avg_over_par=("effective scove over par", "mean"),
+        worst_over_par=("effective scove over par", "max"),
         ).reset_index(drop=True)
 
     # Select critical golf course information only.
@@ -47,12 +46,42 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
         ]].copy()
 
     # Merge with golf course data to round data
-    course_round_summary = course_round_summary.merge(
+    course_summary = course_summary.merge(
         golf_course_data,
         left_on="course",
         right_on="course_name").drop(columns=["course_name"])
 
-    return course_round_summary
+    # Sort and Rank at the course level
+    course_summary = course_summary.sort_values(
+        ['avg_score', 'slope_rating'],
+        ascending=[True, False])
+    course_summary['course_rank'] = course_summary.groupby('course_type').cumcount() + 1
+
+    # Map the rank back to your original rounds dataframe
+    rank_map = course_summary.set_index('course')['course_rank']
+    course_summary['course_rank'] = course_summary['course'].map(rank_map)
+
+    def get_ordinal(n: int) -> str:
+        if 11 <= (n % 100) <= 13:
+            suffix = 'th'
+        else:
+            suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')
+        return f"{n}{suffix}"
+
+    # Get total count of unique courses for each type
+    course_summary['total_per_type'] = (course_summary
+                                    .groupby('course_type')['course']
+                                    .transform('nunique'))
+
+    # Build the full descriptive label
+    # We combine: [Rank] + "out of" + [Total] + [Type] + "courses"
+    course_summary['rank_label'] = (
+        course_summary['course_rank'].apply(get_ordinal) +
+        " / " +
+        course_summary['total_per_type'].astype(str)
+    )
+
+    return course_summary
 
 def transform_round_summaries(golf_rounds: pd.DataFrame,
                               golf_course: pd.DataFrame,
@@ -75,7 +104,7 @@ def transform_round_summaries(golf_rounds: pd.DataFrame,
 
     # Get course type
     golf_rounds = golf_rounds.merge(
-        golf_course[["course_name", "course_type"]],
+        golf_course[["course_name", "course_type", "slope_rating"]],
         left_on="course",
         right_on="course_name",
         how="left").drop(columns=["course_name"])
@@ -84,6 +113,8 @@ def transform_round_summaries(golf_rounds: pd.DataFrame,
     # normalised to 18 holes to allow for comparison across rounds of different lengths
     golf_rounds["effective scove over par"] = (
         golf_rounds["over_par"] / golf_rounds["holes_played"] * 18)
+
+    golf_rounds["effective_score"] = golf_rounds["score"] / golf_rounds["holes_played"] * 18
 
     # Create the conditional label for Effective Score
     # only applicable for rounds with less than 18 holes played
