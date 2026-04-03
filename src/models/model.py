@@ -173,6 +173,7 @@ class GolfRounds(BaseModel):
     format: GameFormat
     holes_played: int = Field(alias="Holes")
     score: int
+    effective_score: int
     over_par: int
 
     # set label for class for reporting
