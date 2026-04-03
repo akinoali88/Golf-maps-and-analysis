@@ -129,6 +129,6 @@ def process_golf_rounds(df: pd.DataFrame) -> pd.DataFrame:
     df['target_holes'] = np.where(df['Par'] > 38, 18, 9)
 
     # Perform the adjustment
-    df['Score'] = (df['Score'] / df['Holes'] * df['target_holes']).round(0)
+    df['effective_score'] = (df['Score'] / df['Holes'] * df['target_holes']).round(0)
 
     return df
