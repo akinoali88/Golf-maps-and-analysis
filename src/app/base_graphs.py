@@ -181,15 +181,15 @@ def plot_score_over_time(df: pd.DataFrame,
 
     fig = px.scatter(df,
                      x="date",
-                     y="effective scove over par",
+                     y="effective score over par",
                      title=("Golf Performance Trends<br>"
                      "<sup>Relative to Par (Normalized to 18 Holes)</sup>"),
                      symbol="course_type",
-                     color="effective scove over par",
+                     color="effective score over par",
                      color_continuous_scale="RdYlGn_r",
                      labels={
                          "date": "Date of Round",
-                         "effective scove over par": "Effective Score Over Par",
+                         "effective score over par": "Effective Score Over Par",
                          "course_type": "Course Type"},
                      hover_name="course",
                      hover_data={

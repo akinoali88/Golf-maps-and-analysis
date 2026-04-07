@@ -5,7 +5,9 @@ Aggregation functions to prepare data for reporting and analysis.
 import pandas as pd
 
 def generate_course_summaries(golf_rounds: pd.DataFrame,
-                              golf_courses: pd.DataFrame, ) -> pd.DataFrame:
+                              golf_courses: pd.DataFrame,
+                              performance_data: pd.DataFrame
+                              ) -> pd.DataFrame:
 
     """
     Aggregrate scoring data from golf rounds at golf course level
@@ -21,16 +23,26 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
         pd.DataFrame: Aggregated DataFrame.
     """
 
-    # Step Aggregate golf round data at course level
+    # Blend round data with performance data
+    golf_rounds = golf_rounds.merge(on="round_number", right=performance_data, how="left")
+
+    # Aggregate golf round data at course level
     course_summary = golf_rounds.groupby("course").agg(
         course=("course", "first"),
         number_of_rounds=("course", "count"),
         best_score=("effective_score", "min"),
         avg_score=("effective_score", "mean"),
         worst_score=("effective_score", "max"),
-        best_over_par=("effective scove over par", "min"),
-        avg_over_par=("effective scove over par", "mean"),
-        worst_over_par=("effective scove over par", "max"),
+        best_over_par=("effective score over par", "min"),
+        avg_over_par=("effective score over par", "mean"),
+        worst_over_par=("effective score over par", "max"),
+        # driving=("driving", "mean"),
+        duff_drives=("duff_drives", "mean"),
+        irons=("irons", "mean"),
+        inside_100_yards=("inside_100_yards", "mean"),
+        chipping=("chipping", "mean"),
+        shots_lost_in_bunkers=("shots_lost_in_bunkers", "mean"),
+        putting=("putting", "mean"),
         ).reset_index(drop=True)
 
     # Select critical golf course information only.
@@ -111,7 +123,7 @@ def transform_round_summaries(golf_rounds: pd.DataFrame,
 
     # Get effective score over par per round,
     # normalised to 18 holes to allow for comparison across rounds of different lengths
-    golf_rounds["effective scove over par"] = (
+    golf_rounds["effective score over par"] = (
         golf_rounds["over_par"] / golf_rounds["holes_played"] * 18)
 
     golf_rounds["effective_score"] = golf_rounds["score"] / golf_rounds["holes_played"] * 18
@@ -119,7 +131,7 @@ def transform_round_summaries(golf_rounds: pd.DataFrame,
     # Create the conditional label for Effective Score
     # only applicable for rounds with less than 18 holes played
     golf_rounds['eff_score_label'] = golf_rounds.apply(
-        lambda x: f"Effective Over Par: {x['effective scove over par']:+.1f}"
+        lambda x: f"Effective Over Par: {x['effective score over par']:+.1f}"
         if x['holes_played'] != 18 else "",
         axis=1
         )
@@ -128,11 +140,11 @@ def transform_round_summaries(golf_rounds: pd.DataFrame,
     golf_rounds = golf_rounds.sort_values("date")
 
     # Calculate rolling metrics
-    golf_rounds['rolling_best'] = (golf_rounds['effective scove over par'].
+    golf_rounds['rolling_best'] = (golf_rounds['effective score over par'].
                                    rolling(window=rolling_window, min_periods=min_periods).min())
-    golf_rounds['rolling_worst'] = (golf_rounds['effective scove over par'].
+    golf_rounds['rolling_worst'] = (golf_rounds['effective score over par'].
                                     rolling(window=rolling_window, min_periods=min_periods).max())
-    golf_rounds['rolling_average'] = (golf_rounds['effective scove over par'].
+    golf_rounds['rolling_average'] = (golf_rounds['effective score over par'].
                                     rolling(window=rolling_window, min_periods=min_periods).mean())
 
     return golf_rounds
