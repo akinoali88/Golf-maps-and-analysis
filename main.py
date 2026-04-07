@@ -64,7 +64,10 @@ validated_performance_df, performance_errors = validate_data(
 
 # Step 4: Prepare output metrics
 round_summaries = transform_round_summaries(validated_gr_df, validated_gc_df)
-course_summaries = generate_course_summaries(round_summaries, validated_gc_df)
+course_summaries = generate_course_summaries(round_summaries,
+                                             validated_gc_df,
+                                             validated_performance_df
+                                             )
 
 # Step 4: Create Dash app
 app = create_dash_app(course_summaries, round_summaries)

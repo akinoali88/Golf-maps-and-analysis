@@ -26,6 +26,11 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
     # Blend round data with performance data
     golf_rounds = golf_rounds.merge(on="round_number", right=performance_data, how="left")
 
+    #Exclude non-numeric performance columns from the conversion to numeric
+    performance_cols = ['driving', 'irons', 'inside_100_yards']
+    golf_rounds[performance_cols] = (golf_rounds[performance_cols].
+                                     apply(pd.to_numeric, errors='coerce'))
+
     # Aggregate golf round data at course level
     course_summary = golf_rounds.groupby("course").agg(
         course=("course", "first"),
@@ -36,7 +41,7 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
         best_over_par=("effective score over par", "min"),
         avg_over_par=("effective score over par", "mean"),
         worst_over_par=("effective score over par", "max"),
-        # driving=("driving", "mean"),
+        driving=("driving", "mean"),
         duff_drives=("duff_drives", "mean"),
         irons=("irons", "mean"),
         inside_100_yards=("inside_100_yards", "mean"),
