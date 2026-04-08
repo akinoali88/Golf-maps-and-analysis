@@ -12,9 +12,11 @@ from dash import html, callback,  dcc, Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
 from src.app.dashboard_logic import create_page_header, create_stat_card
+from src.app.base_graphs import performance_radar_chart
 
 
-def render_page3(df: pd.DataFrame) -> dbc.Container:
+def render_page3(df: pd.DataFrame,
+                 performance_df: pd.DataFrame) -> dbc.Container:
 
     '''
     This function constructs the layout for
@@ -37,6 +39,9 @@ def render_page3(df: pd.DataFrame) -> dbc.Container:
     '''
 
     items = df['course'].sort_values().unique().tolist()
+
+    # this needs work....
+    initial_fig = performance_radar_chart(performance_df)
 
     return dbc.Container([
 
@@ -95,12 +100,12 @@ def render_page3(df: pd.DataFrame) -> dbc.Container:
 
                                     ], className='mt-3 mb-3'),
 
-                            # Output graph
-                            # dcc.Graph(id='avg-feed-volume',
-                            #             figure=initial_fig,
-                            #             config={'displayModeBar': False},
-                            #             style={'height': '350px'},
-                            #             )
+                            # performance radar plot
+                            dcc.Graph(id='avg-feed-volume',
+                                        figure=initial_fig,
+                                        config={'displayModeBar': False},
+                                        style={'height': '350px'},
+                                        )
                         ])
                     ], className='shadow mb-4')
                 ], lg=12, md=12)

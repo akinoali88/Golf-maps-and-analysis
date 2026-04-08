@@ -98,7 +98,25 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
         course_summary['total_per_type'].astype(str)
     )
 
-    return course_summary
+    # Get performance data for radar charts
+    # Need to melt the performance metrics to long format for easier plotting
+    performance_cols = [
+        "driving",
+        "duff_drives",
+        "irons",
+        "inside_100_yards",
+        "chipping",
+        "shots_lost_in_bunkers",
+        "putting"]
+
+    performance_summary = course_summary.melt(
+        id_vars=["course", "course_type"],
+        value_vars=performance_cols,
+        var_name="performance_metric",
+        value_name="performance_value"
+    )
+
+    return course_summary, performance_summary
 
 def transform_round_summaries(golf_rounds: pd.DataFrame,
                               golf_course: pd.DataFrame,

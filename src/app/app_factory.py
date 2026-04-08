@@ -11,7 +11,8 @@ from src.app.components import render_home_tab, render_page2, render_page3
 
 
 def create_dash_app(course_df: pd.DataFrame,
-                    round_df: pd.DataFrame
+                    round_df: pd.DataFrame,
+                    performance_df: pd.DataFrame,
                     ) -> Dash:
     """
     Initializes and configures the Dash application for golf performance analysis.
@@ -71,7 +72,7 @@ def create_dash_app(course_df: pd.DataFrame,
 
                 # --- etc ---
                 dbc.Tab([
-                    render_page3(round_df)],
+                    render_page3(round_df, performance_df)],
                     label="Course Metrics",
                     label_class_name="bg-primary-subtle text-grey",
                         ),

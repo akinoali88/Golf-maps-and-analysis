@@ -313,3 +313,43 @@ def plot_score_over_time(df: pd.DataFrame,
                      griddash='dot')
 
     return fig
+
+def performance_radar_chart(df: pd.DataFrame,
+                           # course: str = None
+                            ) -> Figure:
+    """
+    Generates a radar chart comparing average performance across key golf metrics.
+
+    This function creates a radar (spider) chart to visually compare average 
+    performance across multiple dimensions such as scoring, accuracy, and 
+    consistency.
+
+    Args:
+        df (pd.DataFrame): The dataset containing aggregate performance metrics. 
+            Required columns include 'avg_score', 'avg_over_par', 'fairways_hit_pct',
+
+    """
+
+    rank_cols = ["driving",
+        "irons",
+        "inside_100_yards",
+        "chipping",
+        "putting"]
+
+    filtered_df = df[df['performance_metric'].isin(rank_cols)]
+
+    avg_by_metric = (filtered_df.groupby('performance_metric')['performance_value'].
+                     mean().
+                     reset_index())
+
+    print(type(avg_by_metric))
+
+    fig = px.line_polar(
+        avg_by_metric,
+        r='performance_value',
+        theta='performance_metric',
+        line_close=True)
+
+    fig.update_traces(fill='toself')
+
+    return fig
