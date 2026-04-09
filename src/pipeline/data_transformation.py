@@ -27,9 +27,9 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
     golf_rounds = golf_rounds.merge(on="round_number", right=performance_data, how="left")
 
     #Exclude non-numeric performance columns from the conversion to numeric
-    performance_cols = ['driving', 'irons', 'inside_100_yards']
+    performance_cols = ["driving", "irons", "inside_100_yards"]
     golf_rounds[performance_cols] = (golf_rounds[performance_cols].
-                                     apply(pd.to_numeric, errors='coerce'))
+                                     apply(pd.to_numeric, errors="coerce"))
 
     # Aggregate golf round data at course level
     course_summary = golf_rounds.groupby("course").agg(
@@ -70,32 +70,32 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
 
     # Sort and Rank at the course level
     course_summary = course_summary.sort_values(
-        ['avg_score', 'slope_rating'],
+        ["avg_score", "slope_rating"],
         ascending=[True, False])
-    course_summary['course_rank'] = course_summary.groupby('course_type').cumcount() + 1
+    course_summary["course_rank"] = course_summary.groupby("course_type").cumcount() + 1
 
     # Map the rank back to your original rounds dataframe
-    rank_map = course_summary.set_index('course')['course_rank']
-    course_summary['course_rank'] = course_summary['course'].map(rank_map)
+    rank_map = course_summary.set_index("course")["course_rank"]
+    course_summary["course_rank"] = course_summary["course"].map(rank_map)
 
     def get_ordinal(n: int) -> str:
         if 11 <= (n % 100) <= 13:
-            suffix = 'th'
+            suffix = "th"
         else:
-            suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')
+            suffix = {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
         return f"{n}{suffix}"
 
     # Get total count of unique courses for each type
-    course_summary['total_per_type'] = (course_summary
-                                    .groupby('course_type')['course']
-                                    .transform('nunique'))
+    course_summary["total_per_type"] = (course_summary
+                                    .groupby("course_type")["course"]
+                                    .transform("nunique"))
 
     # Build the full descriptive label
     # We combine: [Rank] + "out of" + [Total] + [Type] + "courses"
-    course_summary['rank_label'] = (
-        course_summary['course_rank'].apply(get_ordinal) +
+    course_summary["rank_label"] = (
+        course_summary["course_rank"].apply(get_ordinal) +
         " / " +
-        course_summary['total_per_type'].astype(str)
+        course_summary["total_per_type"].astype(str)
     )
 
     # Get performance data for radar charts
@@ -115,6 +115,18 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
         var_name="performance_metric",
         value_name="performance_value"
     )
+
+    performance_summary["performance_metric"] = (
+        performance_summary["performance_metric"].
+            replace({
+                "driving": "Driving",
+                "duff_drives": "Duff Drives",
+                "inside_100_yards": "Approach Play",
+                "chipping": "Chipping",
+                "irons": "Irons",
+                "shots_lost_in_bunkers": "Shots Lost in Bunkers",
+                "putting": "Putting"
+                        }))
 
     return course_summary, performance_summary
 
@@ -153,9 +165,9 @@ def transform_round_summaries(golf_rounds: pd.DataFrame,
 
     # Create the conditional label for Effective Score
     # only applicable for rounds with less than 18 holes played
-    golf_rounds['eff_score_label'] = golf_rounds.apply(
-        lambda x: f"Effective Over Par: {x['effective score over par']:+.1f}"
-        if x['holes_played'] != 18 else "",
+    golf_rounds["eff_score_label"] = golf_rounds.apply(
+        lambda x: f"Effective Over Par: {x["effective score over par"]:+.1f}"
+        if x["holes_played"] != 18 else "",
         axis=1
         )
 
@@ -163,11 +175,11 @@ def transform_round_summaries(golf_rounds: pd.DataFrame,
     golf_rounds = golf_rounds.sort_values("date")
 
     # Calculate rolling metrics
-    golf_rounds['rolling_best'] = (golf_rounds['effective score over par'].
+    golf_rounds["rolling_best"] = (golf_rounds["effective score over par"].
                                    rolling(window=rolling_window, min_periods=min_periods).min())
-    golf_rounds['rolling_worst'] = (golf_rounds['effective score over par'].
+    golf_rounds["rolling_worst"] = (golf_rounds["effective score over par"].
                                     rolling(window=rolling_window, min_periods=min_periods).max())
-    golf_rounds['rolling_average'] = (golf_rounds['effective score over par'].
+    golf_rounds["rolling_average"] = (golf_rounds["effective score over par"].
                                     rolling(window=rolling_window, min_periods=min_periods).mean())
 
     return golf_rounds

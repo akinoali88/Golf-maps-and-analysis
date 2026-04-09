@@ -330,19 +330,17 @@ def performance_radar_chart(df: pd.DataFrame,
 
     """
 
-    rank_cols = ["driving",
-        "irons",
-        "inside_100_yards",
-        "chipping",
-        "putting"]
+    rank_cols = ["Driving",
+        "Irons",
+        "Approach Play",
+        "Chipping",
+        "Putting"]
 
     filtered_df = df[df['performance_metric'].isin(rank_cols)]
 
     avg_by_metric = (filtered_df.groupby('performance_metric')['performance_value'].
                      mean().
                      reset_index())
-
-    print(type(avg_by_metric))
 
     fig = px.line_polar(
         avg_by_metric,
@@ -351,5 +349,14 @@ def performance_radar_chart(df: pd.DataFrame,
         line_close=True)
 
     fig.update_traces(fill='toself')
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+            #visible=True,
+            range=[0,10]
+            )),
+        showlegend=False
+        )
 
     return fig
