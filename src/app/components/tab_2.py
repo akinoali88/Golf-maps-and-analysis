@@ -49,12 +49,16 @@ def render_page2(df: pd.DataFrame) -> dbc.Container:
                     icon_class='card-list'),
 
             # Performance chart over time
-            dcc.Graph(
-                id="score-over-time",
-                figure=initial_fig,
-                config={"displayModeBar": False},
-                style={"height": "500px", "marginTop": "-2.5px"},
-                ),
+            dbc.Card([
+                dbc.CardBody(
+                    dcc.Graph(
+                        id="score-over-time",
+                        figure=initial_fig,
+                        config={"displayModeBar": False},
+                        style={"height": "500px", "marginTop": "-2.5px"},
+                        ),
+                    ),
+            ], className="py-2 px-3"),
 
             # Detail breakdown
             ], fluid=True) # Close Container
