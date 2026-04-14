@@ -101,13 +101,19 @@ def render_page3(df: pd.DataFrame,
                                     ], className='mt-3 mb-3'),
 
                             # performance radar plot
-                            dcc.Graph(id='avg-feed-volume',
+                            dbc.Row([
+                                dbc.Col([
+                                    dcc.Graph(
+                                        id='avg-feed-volume',
                                         figure=initial_fig,
                                         config={'displayModeBar': False},
-                                        style={'height': '350px'},
-                                        )
+                                        )],
+                                        width=6),
+                                dbc.Col([ html.Div("Your other content here") ], width=6),
+                            ])
+
                         ])
-                    ], className='shadow mb-4')
+                    ], className='shadow mb-2')
                 ], lg=12, md=12)
             ]) # Close Row
             ], fluid=True) # Close Container
