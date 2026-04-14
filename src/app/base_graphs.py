@@ -5,6 +5,7 @@ Base graph functions for
 import pandas as pd
 import plotly.express as px
 from plotly.graph_objects import Figure
+import plotly.graph_objects as go
 
 def map_golf_courses(df: pd.DataFrame) -> Figure:
 
@@ -342,13 +343,26 @@ def performance_radar_chart(df: pd.DataFrame,
                      mean().
                      reset_index())
 
-    fig = px.line_polar(
-        avg_by_metric,
-        r='performance_value',
-        theta='performance_metric',
-        line_close=True)
+    fig = go.Figure()
 
-    fig.update_traces(fill='toself')
+    # Close the loop by appending the first row's values to the end
+    r_values = (
+        list(avg_by_metric['performance_value']) + [avg_by_metric['performance_value'].iloc[0]]
+    )
+    theta_values = (
+        list(avg_by_metric['performance_metric']) + [avg_by_metric['performance_metric'].iloc[0]]
+    )
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatterpolar(
+            r=r_values,
+            theta=theta_values,
+            fill='toself',
+            name='Overall Average',
+        ))
+
 
     fig.update_layout(
         polar=dict(
@@ -356,7 +370,9 @@ def performance_radar_chart(df: pd.DataFrame,
             #visible=True,
             range=[0,10]
             )),
-        showlegend=False
+        showlegend=True
         )
+
+    fig.update_layout(height=420)
 
     return fig
