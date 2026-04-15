@@ -128,7 +128,18 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
                 "putting": "Putting"
                         }))
 
-    return course_summary, performance_summary
+
+    # Get average performance across all courses for the radar chart
+    rank_cols = ["Driving", "Irons", "Approach Play", "Chipping", "Putting"]
+
+    avg_performance_metrics = (
+        performance_summary[performance_summary['performance_metric'].isin(rank_cols)]
+        .groupby('performance_metric')['performance_value']
+        .mean()
+        .reindex(rank_cols)
+    )
+
+    return course_summary, performance_summary, avg_performance_metrics
 
 def transform_round_summaries(golf_rounds: pd.DataFrame,
                               golf_course: pd.DataFrame,

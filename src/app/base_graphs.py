@@ -315,8 +315,9 @@ def plot_score_over_time(df: pd.DataFrame,
 
     return fig
 
-def performance_radar_chart(df: pd.DataFrame,
-                           # course: str = None
+def performance_radar_chart(
+        avg_metrics: pd.Series,           # pre-computed overall average (never changes)
+        course_metrics: pd.Series = None  # filtered course trace (from callback)
                             ) -> Figure:
     """
     Generates a radar chart comparing average performance across key golf metrics.
@@ -331,48 +332,43 @@ def performance_radar_chart(df: pd.DataFrame,
 
     """
 
-    rank_cols = ["Driving",
-        "Irons",
-        "Approach Play",
-        "Chipping",
-        "Putting"]
+    rank_cols = ["Driving", "Irons", "Approach Play", "Chipping", "Putting"]
 
-    filtered_df = df[df['performance_metric'].isin(rank_cols)]
-
-    avg_by_metric = (filtered_df.groupby('performance_metric')['performance_value'].
-                     mean().
-                     reset_index())
+    def make_traces(series):
+        r = list(series.reindex(rank_cols)) + [series.reindex(rank_cols).iloc[0]]
+        theta = rank_cols + [rank_cols[0]]
+        return r, theta
 
     fig = go.Figure()
 
-    # Close the loop by appending the first row's values to the end
-    r_values = (
-        list(avg_by_metric['performance_value']) + [avg_by_metric['performance_value'].iloc[0]]
-    )
-    theta_values = (
-        list(avg_by_metric['performance_metric']) + [avg_by_metric['performance_metric'].iloc[0]]
-    )
+    # Trace 1: overall average (always present)
+    r_avg, theta = make_traces(avg_metrics)
 
-    fig = go.Figure()
+    fig.add_trace(go.Scatterpolar(
+        r=r_avg, theta=theta,
+        fill='toself', name='Overall Average',
+        line=dict(color='royalblue', width=2),
+        fillcolor='rgba(65, 105, 225, 0.2)',
+    ))
 
-    fig.add_trace(
-        go.Scatterpolar(
-            r=r_values,
-            theta=theta_values,
-            fill='toself',
-            name='Overall Average',
+    print(course_metrics)
+
+    # Trace 2: selected course (added when filter is applied)
+    if course_metrics is not None:
+        r_course, theta = make_traces(course_metrics)
+        fig.add_trace(go.Scatterpolar(
+            r=r_course, theta=theta,
+            fill='toself', name='Selected Course',
+            line=dict(color='tomato', width=2),
+            fillcolor='rgba(255, 99, 71, 0.2)',
         ))
 
-
     fig.update_layout(
-        polar=dict(
-            radialaxis=dict(
-            #visible=True,
-            range=[0,10]
-            )),
-        showlegend=True
-        )
-
-    fig.update_layout(height=420)
+        polar=dict(radialaxis=dict(visible=True, range=[0, 10], tickvals=[2, 4, 6, 8, 10])),
+        showlegend=True,
+        legend=dict(orientation='h', yanchor='bottom', y=-0.15, xanchor='center', x=0.5),
+        margin=dict(t=40, b=60, l=60, r=60),
+        height=420,
+    )
 
     return fig

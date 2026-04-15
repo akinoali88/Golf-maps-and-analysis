@@ -185,7 +185,7 @@ class GolfRounds(BaseModel):
 # 1. A basic rank (0-10)
 # We use float to allow for half-points (e.g., 7.5)
 RankScore = Annotated[float, Field(ge=0, le=10)]
-Count = Annotated[int, Field(ge=0)]
+Count = Annotated[float, Field(ge=0)]
 
 OptionalCount = Union[Count, Literal["not recorded"]]
 

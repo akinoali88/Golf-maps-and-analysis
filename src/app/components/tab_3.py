@@ -8,7 +8,7 @@ Render the 3rd page
 
 from io import StringIO
 
-from dash import html, callback,  dcc, Input, Output
+from dash import html, callback,  dcc, Input, Output, State, no_update
 import dash_bootstrap_components as dbc
 import pandas as pd
 from src.app.dashboard_logic import create_page_header, create_stat_card
@@ -16,7 +16,8 @@ from src.app.base_graphs import performance_radar_chart
 
 
 def render_page3(df: pd.DataFrame,
-                 performance_df: pd.DataFrame) -> dbc.Container:
+                 avg_performance_metrics: pd.DataFrame
+                 ) -> dbc.Container:
 
     '''
     This function constructs the layout for
@@ -38,10 +39,11 @@ def render_page3(df: pd.DataFrame,
 
     '''
 
+
     items = df['course'].sort_values().unique().tolist()
 
     # this needs work....
-    initial_fig = performance_radar_chart(performance_df)
+    initial_fig = performance_radar_chart(avg_performance_metrics)
 
     return dbc.Container([
 
@@ -104,7 +106,7 @@ def render_page3(df: pd.DataFrame,
                             dbc.Row([
                                 dbc.Col([
                                     dcc.Graph(
-                                        id='avg-feed-volume',
+                                        id='performance-radar',
                                         figure=initial_fig,
                                         config={'displayModeBar': False},
                                         )],
@@ -120,16 +122,20 @@ def render_page3(df: pd.DataFrame,
 
 
 @callback(
-    [Output('rounds-played', 'children'),
+    Output('rounds-played', 'children'),
     Output('avg-score', 'children'),
     Output('avg-score-vs-par', 'children'),
     Output('best-score', 'children'),
     Output('worst-score', 'children'),
-    Output('course-ranking', 'children'),],
-    [Input('demo-dropdown', 'value'),
-     Input('course-data', 'data')]
+    Output('course-ranking', 'children'),
+    Output('performance-radar', 'figure'),
+    Input('demo-dropdown', 'value'),
+    State('course-data', 'data'),
+    State('performance-store', 'data'),
+    State('avg-performance-store', 'data'),
 )
-def update_output(value, course_data):
+
+def update_output(value, course_data, performance_data, avg_performance_data):
 
     """
     Filters golf round data by course and calculates performance statistics.
@@ -156,7 +162,12 @@ def update_output(value, course_data):
     """
 
     # Convert stored JSON data back to DataFrame
+    if not value or not course_data or not performance_data or not avg_performance_data:
+        return no_update
+
     df = pd.read_json(StringIO(course_data), orient='records')
+    performance_df = pd.read_json(StringIO(performance_data), orient='records')
+    avg_performance_metrics = pd.Series(avg_performance_data)
 
     filtered_df = df.loc[df['course'] == value]
 
@@ -168,7 +179,22 @@ def update_output(value, course_data):
     worst_score = filtered_df['worst_score'].iloc[0]
     course_ranking = filtered_df['rank_label'].iloc[0]
 
+    # Get performance metrics for the selected course
+    rank_cols = ["Driving", "Irons", "Approach Play", "Chipping", "Putting"]
+
+    course_metrics = (
+        performance_df[
+            (performance_df['course'] == value) &
+            (performance_df['performance_metric'].isin(rank_cols))
+        ]
+        .groupby('performance_metric')['performance_value']
+        .mean()
+    )
+
+    output_fig = performance_radar_chart(avg_performance_metrics, course_metrics)
+
     return (f'{rounds_played}',
             f'{avg_score:.0f}',
             f'{avg_score_vs_par:+.1f}',
-            f'{best_score}', f'{worst_score}', f'{course_ranking}')
+            f'{best_score}', f'{worst_score}', f'{course_ranking}',
+            output_fig)

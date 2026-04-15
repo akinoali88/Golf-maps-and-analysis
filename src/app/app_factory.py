@@ -13,6 +13,7 @@ from src.app.components import render_home_tab, render_page2, render_page3
 def create_dash_app(course_df: pd.DataFrame,
                     round_df: pd.DataFrame,
                     performance_df: pd.DataFrame,
+                    avg_performance_metrics: pd.DataFrame,
                     ) -> Dash:
     """
     Initializes and configures the Dash application for golf performance analysis.
@@ -53,6 +54,8 @@ def create_dash_app(course_df: pd.DataFrame,
             # Store the data as JSON in the browser/app state
             dcc.Store(id="course-data", data=course_df.to_json(orient="records")),
             dcc.Store(id="round-data", data=round_df.to_json(orient="records")),
+            dcc.Store(id='performance-store', data=performance_df.to_json(orient='records')),
+            dcc.Store(id='avg-performance-store', data=avg_performance_metrics.to_dict()),
 
             dbc.Tabs([
 
@@ -72,7 +75,7 @@ def create_dash_app(course_df: pd.DataFrame,
 
                 # --- etc ---
                 dbc.Tab([
-                    render_page3(round_df, performance_df)],
+                    render_page3(round_df, avg_performance_metrics)],
                     label="Course Metrics",
                     label_class_name="bg-primary-subtle text-grey",
                         ),
