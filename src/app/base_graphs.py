@@ -317,18 +317,36 @@ def plot_score_over_time(df: pd.DataFrame,
 
 def performance_radar_chart(
         avg_metrics: pd.Series,           # pre-computed overall average (never changes)
-        course_metrics: pd.Series = None  # filtered course trace (from callback)
+        course_metrics: pd.Series = None,  # filtered course trace (from callback)
+        course: str = None
                             ) -> Figure:
     """
     Generates a radar chart comparing average performance across key golf metrics.
 
-    This function creates a radar (spider) chart to visually compare average 
-    performance across multiple dimensions such as scoring, accuracy, and 
-    consistency.
+    Produces a radar (spider) chart with up to two traces: a baseline trace
+    showing overall average performance across all courses, and an optional
+    second trace showing the selected course's average performance for direct
+    comparison.
 
     Args:
-        df (pd.DataFrame): The dataset containing aggregate performance metrics. 
-            Required columns include 'avg_score', 'avg_over_par', 'fairways_hit_pct',
+        avg_metrics (pd.Series): Pre-computed overall average performance values
+            indexed by metric name. Used as the baseline trace and must contain
+            values for all five metrics: Driving, Irons, Approach Play, Chipping,
+            and Putting.
+        course_metrics (pd.Series, optional): Average performance values for the
+            selected course, indexed by metric name. When provided, renders as a
+            second trace for comparison against the overall average. Defaults to None.
+        course (str, optional): Name of the selected course, used as the legend
+            label for the course trace. Only relevant when course_metrics is
+            provided. Defaults to None.
+
+    Returns:
+        Figure: A Plotly Figure object containing a polar scatter chart with:
+            - A blue 'Overall Average' trace (always present).
+            - A red course-specific trace (present only when course_metrics
+            is provided).
+            - A vertical legend positioned to the right of the chart.
+            - A radial axis scaled from 0 to 10.s
 
     """
 
@@ -351,14 +369,12 @@ def performance_radar_chart(
         fillcolor='rgba(65, 105, 225, 0.2)',
     ))
 
-    print(course_metrics)
-
     # Trace 2: selected course (added when filter is applied)
     if course_metrics is not None:
         r_course, theta = make_traces(course_metrics)
         fig.add_trace(go.Scatterpolar(
             r=r_course, theta=theta,
-            fill='toself', name='Selected Course',
+            fill='toself', name=course,
             line=dict(color='tomato', width=2),
             fillcolor='rgba(255, 99, 71, 0.2)',
         ))
@@ -366,7 +382,13 @@ def performance_radar_chart(
     fig.update_layout(
         polar=dict(radialaxis=dict(visible=True, range=[0, 10], tickvals=[2, 4, 6, 8, 10])),
         showlegend=True,
-        legend=dict(orientation='h', yanchor='bottom', y=-0.15, xanchor='center', x=0.5),
+        legend=dict(
+            orientation='v',
+            yanchor='middle',
+            y=0.5,
+            xanchor='left',
+            x=1.1,
+        ),
         margin=dict(t=40, b=60, l=60, r=60),
         height=420,
     )

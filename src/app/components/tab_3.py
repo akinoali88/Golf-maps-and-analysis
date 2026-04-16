@@ -19,25 +19,41 @@ def render_page3(df: pd.DataFrame,
                  avg_performance_metrics: pd.DataFrame
                  ) -> dbc.Container:
 
-    '''
-    This function constructs the layout for
+    """
+        Constructs the layout for the Course Detail page (Page 3) of the golf
+    analytics dashboard.
+
+    This function builds a Dash Bootstrap Container comprising a page header,
+    a course selector dropdown, summary statistic cards, and a performance
+    radar chart. Statistic cards and the radar chart are updated dynamically
+    via the update_output callback when the dropdown selection changes.
 
     Parameters:
-        df: pd.DataFrame
-            DataFrame containing 
-        
+        df (pd.DataFrame): Course-level summary data. Must contain a 'course'
+            column used to populate the dropdown options.
+        avg_performance_metrics (pd.Series): Pre-computed overall average
+            performance values indexed by metric name (e.g. Driving, Irons,
+            Putting). Used to render the baseline trace of the radar chart
+            on initial load.
+
     Returns:
-        dbc.Container
-            A Bootstrap container component containing the complete home tab layout with:
-            - a
-            - b 
-            
+        dbc.Container: A fluid Bootstrap container containing:
+            - A page header with title, subtitle, and footer text.
+            - A course selector dropdown (id: demo-dropdown).
+            - Six summary stat cards showing rounds played, average score,
+            average score vs par, best score, worst score, and course ranking.
+            - A radar chart (id: performance-radar) comparing performance
+            metrics for the selected course against the overall average.
+
     Notes:
         The component uses Dash Bootstrap Components for responsive layout and
-        styling. Chart interactions and statistics updates are handled via Dash callbacks
-        using the component IDs defined in this function.
+        styling. Chart interactions and statistics updates are handled via the
+        update_output callback using the component IDs defined in this function.
+        The stores course-data, performance-store, and avg-performance-store
+        must be present in the parent layout for the callback to function.
 
-    '''
+
+    """
 
 
     items = df['course'].sort_values().unique().tolist()
@@ -135,41 +151,47 @@ def render_page3(df: pd.DataFrame,
     State('avg-performance-store', 'data'),
 )
 
-def update_output(value, course_data, performance_data, avg_performance_data):
+def update_output(course_name, course_data, performance_data, avg_performance_data):
 
     """
-    Filters golf round data by course and calculates performance statistics.
-
-    This function takes a JSON string of course data, converts it to a DataFrame, 
-    and displays key metrics for a specific course, including total rounds 
-    played, scoring averages, and score extremes.
+    Dash callback that filters golf data by selected course and returns updated
+    statistics and a performance radar chart.
 
     Args:
-        value (str): The name of the course to filter the data by.
-        course_data (str): A JSON-formatted string containing the course summary records 
-            (must be compatible with pandas 'records' orientation).
+        course_name (str): The name of the selected course from the dropdown.
+        course_data (str): JSON string (records orientation) containing course-level
+            summary statistics, including rounds played, scoring averages, and rankings.
+        performance_data (str): JSON string (records orientation) containing per-round
+            performance metrics (e.g. Driving, Irons, Putting) with columns
+            'course', 'performance_metric', and 'performance_value'.
+        avg_performance_data (dict): Serialised dict mapping performance metric names
+            to their overall average values, used to render the baseline radar trace.
 
     Returns:
-        tuple: A tuple of six formatted strings:
-            - rounds_played (str): Total number of rounds played at the course.
-            - avg_score (str): Mean score formatted to two decimal places.
-            - avg_score_vs_par (str): Mean score relative to par (two decimal places).
-            - best_score (str): The highest numerical score recorded.
-            - worst_score (str): The lowest numerical score recorded.
-            - course_ranking (str): Rank of course versus of same course type
-                (18 hole, 9 hole, etc.) based on average score vs par.
+        tuple: A 7-element tuple of Dash component values:
+            - rounds_played (str): Total rounds played at the selected course.
+            - avg_score (str): Mean score rounded to the nearest integer.
+            - avg_score_vs_par (str): Mean score vs par, formatted with sign (e.g. '+4.2').
+            - best_score (str): Lowest score recorded at the course.
+            - worst_score (str): Highest score recorded at the course.
+            - course_ranking (str): Course rank within its category (e.g. 18-hole)
+                based on average score vs par.
+            - output_fig (Figure): Radar chart comparing overall average performance
+                against the selected course's average across key metrics.
+
+    Returns no_update if any required input is missing or None.
 
     """
 
     # Convert stored JSON data back to DataFrame
-    if not value or not course_data or not performance_data or not avg_performance_data:
+    if not course_name or not course_data or not performance_data or not avg_performance_data:
         return no_update
 
     df = pd.read_json(StringIO(course_data), orient='records')
     performance_df = pd.read_json(StringIO(performance_data), orient='records')
     avg_performance_metrics = pd.Series(avg_performance_data)
 
-    filtered_df = df.loc[df['course'] == value]
+    filtered_df = df.loc[df['course'] == course_name]
 
     # Ensure scalar values using .iloc[0]
     rounds_played = filtered_df['number_of_rounds'].iloc[0]
@@ -184,14 +206,14 @@ def update_output(value, course_data, performance_data, avg_performance_data):
 
     course_metrics = (
         performance_df[
-            (performance_df['course'] == value) &
+            (performance_df['course'] == course_name) &
             (performance_df['performance_metric'].isin(rank_cols))
         ]
         .groupby('performance_metric')['performance_value']
         .mean()
     )
 
-    output_fig = performance_radar_chart(avg_performance_metrics, course_metrics)
+    output_fig = performance_radar_chart(avg_performance_metrics, course_metrics, course_name)
 
     return (f'{rounds_played}',
             f'{avg_score:.0f}',
