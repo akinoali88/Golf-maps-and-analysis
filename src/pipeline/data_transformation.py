@@ -41,6 +41,7 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
         best_over_par=("effective score over par", "min"),
         avg_over_par=("effective score over par", "mean"),
         worst_over_par=("effective score over par", "max"),
+        overall_performance=("overall_performance", "mean"),
         driving=("driving", "mean"),
         duff_drives=("duff_drives", "mean"),
         irons=("irons", "mean"),
@@ -101,6 +102,7 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
     # Get performance data for radar charts
     # Need to melt the performance metrics to long format for easier plotting
     performance_cols = [
+        "overall_performance",
         "driving",
         "duff_drives",
         "irons",
@@ -119,6 +121,7 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
     performance_summary["performance_metric"] = (
         performance_summary["performance_metric"].
             replace({
+                "overall_performance": "Overall Performance",
                 "driving": "Driving",
                 "duff_drives": "Duff Drives",
                 "inside_100_yards": "Approach Play",
@@ -130,7 +133,7 @@ def generate_course_summaries(golf_rounds: pd.DataFrame,
 
 
     # Get average performance across all courses for the radar chart
-    rank_cols = ["Driving", "Irons", "Approach Play", "Chipping", "Putting"]
+    rank_cols = ["Overall Performance", "Driving", "Irons", "Approach Play", "Chipping", "Putting"]
 
     avg_performance_metrics = (
         performance_summary[performance_summary['performance_metric'].isin(rank_cols)]

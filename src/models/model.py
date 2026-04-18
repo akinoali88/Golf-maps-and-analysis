@@ -210,6 +210,7 @@ class RoundPerformance(BaseModel):
         Literal["not recorded"]] = Field(default="not recorded")
 
     # Required fields for all rounds
+    overall_performance: RankScore
     duff_drives: Count
     irons: RankScore
     inside_100_yards: RankScore

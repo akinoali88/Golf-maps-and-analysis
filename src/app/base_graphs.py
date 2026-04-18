@@ -350,7 +350,7 @@ def performance_radar_chart(
 
     """
 
-    rank_cols = ["Driving", "Irons", "Approach Play", "Chipping", "Putting"]
+    rank_cols = ["Overall Performance", "Driving", "Irons", "Approach Play", "Chipping", "Putting"]
 
     def make_traces(series):
         r = list(series.reindex(rank_cols)) + [series.reindex(rank_cols).iloc[0]]
@@ -380,6 +380,12 @@ def performance_radar_chart(
         ))
 
     fig.update_layout(
+        title=dict(
+            text='Performance Breakdown',
+            x=0.35,
+            xanchor='left',
+            font=dict(size=14),
+        ),
         polar=dict(radialaxis=dict(visible=True, range=[0, 10], tickvals=[2, 4, 6, 8, 10])),
         showlegend=True,
         legend=dict(

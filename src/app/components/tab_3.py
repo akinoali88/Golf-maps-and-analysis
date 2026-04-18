@@ -74,7 +74,7 @@ def render_page3(df: pd.DataFrame,
                 dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
-                            html.H5('Course Performance Breakdown',
+                            html.H5('Select Course:',
                                     className='card-title'),
 
                             # Select course
@@ -202,7 +202,7 @@ def update_output(course_name, course_data, performance_data, avg_performance_da
     course_ranking = filtered_df['rank_label'].iloc[0]
 
     # Get performance metrics for the selected course
-    rank_cols = ["Driving", "Irons", "Approach Play", "Chipping", "Putting"]
+    rank_cols = ["Overall Performance", "Driving", "Irons", "Approach Play", "Chipping", "Putting"]
 
     course_metrics = (
         performance_df[
