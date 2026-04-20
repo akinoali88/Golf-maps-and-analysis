@@ -19,23 +19,23 @@ def map_golf_courses(df: pd.DataFrame) -> Figure:
 
     Args:
         df (pd.DataFrame): The dataset containing course metadata and aggregate 
-            statistics. Required columns: 'latitude', 'longitude', 'course', 
-            'number_of_rounds', 'avg_over_par', 'par', 'avg_score', 'best_score', 
-            'course_index', and 'slope_rating'.
+            statistics. Required columns: "latitude", "longitude", "course", 
+            "number_of_rounds", "avg_over_par", "par", "avg_score", "best_score", 
+            "course_index", and "slope_rating".
 
     Returns:
         plotly.graph_objects.Figure: A localized map (centered on SE England) 
             featuring:
             - Bubble markers scaled to the total number of rounds played.
             - Diverging color scale (Red-Yellow-Green) based on average score vs. par.
-            - A 'Carto Voyager' basemap with minimal labeling for clarity.
+            - A "Carto Voyager" basemap with minimal labeling for clarity.
             - Custom legend-style annotation explaining circle size logic.
             - Comprehensive hover tooltips including Slope Rating and Course Index.
 
     Notes:
-        The layout uses 'scattermode="group"' to mitigate marker overlap in 
+        The layout uses "scattermode="group"" to mitigate marker overlap in 
         geographically dense areas. The color axis is intentionally reversed 
-        ('RdYlGn_r') so that lower scores (better performance) appear green.
+        ("RdYlGn_r") so that lower scores (better performance) appear green.
     """
 
     fig = px.scatter_map(
@@ -153,14 +153,14 @@ def plot_score_over_time(df: pd.DataFrame,
     """
     Generates a multi-layered time-series visualization of golf performance.
 
-    The chart plots individual round scores (normalized to 18-hole 'effective' 
+    The chart plots individual round scores (normalized to 18-hole "effective" 
     scores) and overlays statistical trends to highlight improvement or 
     regression over time.
 
     Args:
         df (pd.DataFrame): The dataset containing golf rounds. Required columns 
-            include 'date', 'effective scove over par', 'course', 'holes_played', 
-            'score', 'over_par', 'eff_score_label', 'rolling_best', and 'rolling_worst'.
+            include "date", "effective scove over par", "course", "holes_played", 
+            "score", "over_par", "eff_score_label", "rolling_best", and "rolling_worst".
         rolling_window (int, optional): The number of rounds to include in the 
             moving average and best/worst calculations. Defaults to 10.
         min_periods (int, optional): Minimum number of observations in window 
@@ -220,22 +220,22 @@ def plot_score_over_time(df: pd.DataFrame,
         ),
         xaxis=dict(
             domain=[0, chart_width],    # Chart only takes up 70% of the width
-            range=[df['date'].min(), df['date'].max()]
+            range=[df["date"].min(), df["date"].max()]
         ),
         yaxis=dict(
-            # '+d' = Always show sign, integer format
-            # '+.1f' = Always show sign, 1 decimal place (best for 'effective' scores)
+            # "+d" = Always show sign, integer format
+            # "+.1f" = Always show sign, 1 decimal place (best for "effective" scores)
             tickformat="+d",
         ),
 
         coloraxis_colorbar=dict(
             title="<b>Effective Score<br>Over Par</b>",
             tickformat="+d",  # Always show the + or - sign
-            len=0.8,           # Shortens it slightly so it doesn't crowd the margins
+            len=0.8,           # Shortens it slightly so it doesn"t crowd the margins
             y=1.02,
             yanchor="top",
         ),
-        # Optional: Add top margin so the legend doesn't get cut off
+        # Optional: Add top margin so the legend doesn"t get cut off
         margin=dict(t=80)
     )
 
@@ -255,7 +255,7 @@ def plot_score_over_time(df: pd.DataFrame,
         marker=dict(
             line=dict(
                 width=1,
-                color='DarkSlateGrey' # Or 'white' if you want them to pop more
+                color="DarkSlateGrey" # Or "white" if you want them to pop more
                 ),
             ),
     )
@@ -268,38 +268,38 @@ def plot_score_over_time(df: pd.DataFrame,
 
     # Add Rolling Best Line (Lower is better in golf, so usually Green)
     fig.add_scatter(
-        x=df['date'],
-        y=df['rolling_best'],
-        mode='lines',
-        name=f'{rolling_window}-Round Rolling Best Score',
-        line=dict(color='rgba(40, 167, 69, 0.4)', width=2, dash='dot'), # Translucent green
-        legendgroup='Rolling scores',
+        x=df["date"],
+        y=df["rolling_best"],
+        mode="lines",
+        name=f"{rolling_window}-Round Rolling Best Score",
+        line=dict(color="rgba(40, 167, 69, 0.4)", width=2, dash="dot"), # Translucent green
+        legendgroup="Rolling scores",
         hovertemplate=f"Rolling {rolling_window}-Round Best: %{{y:+d}}<extra></extra>"
     )
 
     # Add Rolling Worst Line (Higher is worse, so usually Red)
     fig.add_scatter(
-        x=df['date'],
-        y=df['rolling_worst'],
-        mode='lines',
-        fill='tonexty',
-        legendgroup='Rolling scores',
+        x=df["date"],
+        y=df["rolling_worst"],
+        mode="lines",
+        fill="tonexty",
+        legendgroup="Rolling scores",
         legendgrouptitle_text="<b>Rolling Average Ranges</b>",
-        name=f'{rolling_window}-Round Rolling Worst Score',
-        fillcolor='rgba(220, 53, 69, 0.05)', # Very light green fill
-        line=dict(color='rgba(220, 53, 69, 0.4)', width=2, dash='dot'), # Translucent red
+        name=f"{rolling_window}-Round Rolling Worst Score",
+        fillcolor="rgba(220, 53, 69, 0.05)", # Very light green fill
+        line=dict(color="rgba(220, 53, 69, 0.4)", width=2, dash="dot"), # Translucent red
         hovertemplate=f"Rolling {rolling_window}-Round Worst: %{{y:+d}}<extra></extra>"
     )
 
     # Add Rolling Average line (Dashed Blue)
     fig.add_scatter(
-        x=df['date'],
-        y=df['rolling_average'],
-        mode='lines',
-        legendgroup='Rolling scores',
-        name=f'{rolling_window}-Round Rolling Average Score',
-        fillcolor='rgba(220, 53, 69, 0.05)', # Very light green fill
-        line=dict(color='rgba(220, 53, 69, 0.4)', width=2, dash='dot'), # Translucent red
+        x=df["date"],
+        y=df["rolling_average"],
+        mode="lines",
+        legendgroup="Rolling scores",
+        name=f"{rolling_window}-Round Rolling Average Score",
+        fillcolor="rgba(220, 53, 69, 0.05)", # Very light green fill
+        line=dict(color="rgba(220, 53, 69, 0.4)", width=2, dash="dot"), # Translucent red
         hovertemplate=f"Rolling {rolling_window}-Round Average: %{{y:+d}}<extra></extra>"
     )
 
@@ -310,8 +310,8 @@ def plot_score_over_time(df: pd.DataFrame,
                      linecolor="lightgrey",
                      mirror=True,
                      gridwidth=0.25,
-                     gridcolor='lightgrey',
-                     griddash='dot')
+                     gridcolor="lightgrey",
+                     griddash="dot")
 
     return fig
 
@@ -325,7 +325,7 @@ def performance_radar_chart(
 
     Produces a radar (spider) chart with up to two traces: a baseline trace
     showing overall average performance across all courses, and an optional
-    second trace showing the selected course's average performance for direct
+    second trace showing the selected course"s average performance for direct
     comparison.
 
     Args:
@@ -342,7 +342,7 @@ def performance_radar_chart(
 
     Returns:
         Figure: A Plotly Figure object containing a polar scatter chart with:
-            - A blue 'Overall Average' trace (always present).
+            - A blue "Overall Average" trace (always present).
             - A red course-specific trace (present only when course_metrics
             is provided).
             - A vertical legend positioned to the right of the chart.
@@ -364,9 +364,9 @@ def performance_radar_chart(
 
     fig.add_trace(go.Scatterpolar(
         r=r_avg, theta=theta,
-        fill='toself', name='Overall Average',
-        line=dict(color='royalblue', width=2),
-        fillcolor='rgba(65, 105, 225, 0.2)',
+        fill="toself", name="Overall Average",
+        line=dict(color="royalblue", width=2),
+        fillcolor="rgba(65, 105, 225, 0.2)",
     ))
 
     # Trace 2: selected course (added when filter is applied)
@@ -374,29 +374,30 @@ def performance_radar_chart(
         r_course, theta = make_traces(course_metrics)
         fig.add_trace(go.Scatterpolar(
             r=r_course, theta=theta,
-            fill='toself', name=course,
-            line=dict(color='tomato', width=2),
-            fillcolor='rgba(255, 99, 71, 0.2)',
+            fill="toself", name=course,
+            line=dict(color="tomato", width=2),
+            fillcolor="rgba(255, 99, 71, 0.2)",
         ))
 
     fig.update_layout(
         title=dict(
-            text='Performance Breakdown',
-            x=0.35,
-            xanchor='left',
-            font=dict(size=14),
+            text=f"{course} vs. Overall Performance Averages<br>"
+            "<sup>Rated 1 (Best) to 10 (Worst) across key areas</sup>",
+            x=0.45,
+            xanchor="center",
+            font=dict(size=20),
         ),
         polar=dict(radialaxis=dict(visible=True, range=[0, 10], tickvals=[2, 4, 6, 8, 10])),
         showlegend=True,
         legend=dict(
-            orientation='v',
-            yanchor='middle',
+            orientation="v",
+            yanchor="middle",
             y=0.5,
-            xanchor='left',
+            xanchor="left",
             x=1.1,
         ),
-        margin=dict(t=40, b=60, l=60, r=60),
-        height=420,
+        margin=dict(t=100, b=60, l=60, r=120),
+        height=440,
     )
 
     return fig

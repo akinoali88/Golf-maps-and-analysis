@@ -74,21 +74,23 @@ def render_page3(df: pd.DataFrame,
                 dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
-                            html.H5('Select Course:',
-                                    className='card-title'),
-
-                            # Select course
-                            dbc.Row([
-                                dbc.Col([
-                                    html.Div([
+                            html.Div(
+                                [
+                                    html.H5('Select Course:',
+                                            className='fw-bold text-primary mb-0 me-2',
+                                            style={'whiteSpace': 'nowrap'}),
+                                    html.Div(
                                         dcc.Dropdown(
                                             options=items,
                                             value=items[0],
                                             id='demo-dropdown',
-                                            style={'color': '#777'}),
-                                    ])
-                                ], width=4), # 4 out of 12 columns = 1/3 of the page
-                            ]),
+                                            style={'color': '#777'}
+                                        ),
+                                        style={'width': '20%'}
+                                    ),
+                                ],
+                                style={'display': 'flex', 'alignItems': 'center'}
+                            ),
 
                             # Key summary
                             dbc.Row([
@@ -149,9 +151,10 @@ def render_page3(df: pd.DataFrame,
     State('course-data', 'data'),
     State('performance-store', 'data'),
     State('avg-performance-store', 'data'),
+    State('round-data', 'data'),
 )
 
-def update_output(course_name, course_data, performance_data, avg_performance_data):
+def update_output(course_name, course_data, performance_data, avg_performance_data, round_data):
 
     """
     Dash callback that filters golf data by selected course and returns updated
@@ -189,9 +192,11 @@ def update_output(course_name, course_data, performance_data, avg_performance_da
 
     df = pd.read_json(StringIO(course_data), orient='records')
     performance_df = pd.read_json(StringIO(performance_data), orient='records')
+    round_df = pd.read_json(StringIO(round_data), orient='records')
     avg_performance_metrics = pd.Series(avg_performance_data)
 
     filtered_df = df.loc[df['course'] == course_name]
+    round_df = round_df.loc[round_df['course'] == course_name]
 
     # Ensure scalar values using .iloc[0]
     rounds_played = filtered_df['number_of_rounds'].iloc[0]
@@ -214,6 +219,13 @@ def update_output(course_name, course_data, performance_data, avg_performance_da
     )
 
     output_fig = performance_radar_chart(avg_performance_metrics, course_metrics, course_name)
+
+    # Prepare data for table of recent rounds
+    table_cols = [ 'date', 'year', 'format', 'holes_played',
+       'score', 'over_par',]
+
+    #need to sort by date to show last 5 rounds
+    print(round_df.sort_values('date', ascending=False)[table_cols].head())
 
     return (f'{rounds_played}',
             f'{avg_score:.0f}',
