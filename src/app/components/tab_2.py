@@ -12,7 +12,7 @@ from src.app.dashboard_logic import create_page_header
 from src.app.base_graphs import plot_score_over_time
 
 
-def render_page2(df: pd.DataFrame) -> dbc.Container:
+def render_page2(round_df: pd.DataFrame) -> dbc.Container:
 
     """
     Constructs the 'Performance History' layout for the dashboard.
@@ -21,7 +21,7 @@ def render_page2(df: pd.DataFrame) -> dbc.Container:
     a visual timeline of golf scores since 2016.
 
     Args:
-        df (pd.DataFrame): The validated golf dataset containing date-indexed 
+        round_df (pd.DataFrame): The validated golf dataset containing date-indexed 
             scoring data required for time-series plotting.
         
     Returns:
@@ -36,8 +36,7 @@ def render_page2(df: pd.DataFrame) -> dbc.Container:
         be further manipulated via Dash callbacks using its component ID.
     """
 
-
-    initial_fig = plot_score_over_time(df)
+    initial_fig = plot_score_over_time(round_df)
 
     return dbc.Container([
 
