@@ -8,7 +8,8 @@ create state card and create page header
 from typing import List
 
 import dash_bootstrap_components as dbc
-from dash import html
+from dash import html, dash_table
+import pandas as pd
 
 def create_stat_card(title: str,
                      id_name: str,
@@ -184,7 +185,7 @@ def create_course_badges(
             ],
         className="mx-0 mb-2")
 
-def get_top_bottom_courses(df,count=5, top=True):
+def get_top_bottom_courses(df: pd.DataFrame, count: int = 5, top: bool = True):
     """
     Extracts and formats a list of courses based on their performance.
 
@@ -212,3 +213,27 @@ def get_top_bottom_courses(df,count=5, top=True):
         f"{course} ({score:+.1f})"
         for course, score in subset[["course", "avg_over_par"]].itertuples(index=False, name=None)
     ]
+
+def generate_rounds_table(round_df: pd.DataFrame) -> dash_table.DataTable | dbc.Table:
+    """
+    Generates a table component from a DataFrame of golf rounds.
+
+    Args:
+        round_df (pd.DataFrame): A DataFrame containing golf round data.
+    Returns:
+        dash_table.DataTable | dbc.Table: A styled table component.
+        
+    """
+
+    return dbc.Table([
+            html.Thead(
+                html.Tr([
+                    html.Th(col, style={'backgroundColor': '#3e6791', 'color': 'white'})
+                    for col in round_df.columns
+                ])
+            ),
+            html.Tbody([
+                html.Tr([html.Td(row[col]) for col in round_df.columns])
+                for _, row in round_df.iterrows()
+            ])
+        ], striped=True, bordered=True, hover=True)

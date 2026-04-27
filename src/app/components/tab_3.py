@@ -11,7 +11,7 @@ from io import StringIO
 from dash import html, callback,  dcc, Input, Output, State, no_update
 import dash_bootstrap_components as dbc
 import pandas as pd
-from src.app.dashboard_logic import create_page_header, create_stat_card
+from src.app.dashboard_logic import create_page_header, create_stat_card, generate_rounds_table
 from src.app.base_graphs import performance_radar_chart
 
 
@@ -64,7 +64,7 @@ def render_page3(round_df: pd.DataFrame,
        'score', 'over_par',]
 
     #need to sort by date to show last 5 rounds
-    recent_rounds = round_df.sort_values('date', ascending=False)[table_cols].head()
+    recent_rounds = round_df.sort_values('date', ascending=False)[table_cols]
 
     # this needs work....
     initial_fig = performance_radar_chart(avg_performance_metrics)
@@ -139,11 +139,7 @@ def render_page3(round_df: pd.DataFrame,
                                         width=6),
                                 dbc.Col(
                                     html.Div(
-                                        dbc.Table.from_dataframe(
-                                            recent_rounds,
-                                            #striped=True,
-                                            bordered=True,
-                                            hover=True),
+                                        generate_rounds_table(recent_rounds),
                                         id='recent-rounds-table',
                                         style={'marginTop': '40px'},
                                     ),
@@ -245,14 +241,9 @@ def update_output(course_name, course_data, performance_data, avg_performance_da
        'score', 'over_par',]
 
     #need to sort by date to show last 5 rounds
-    recent_rounds = round_df.sort_values('date', ascending=False)[table_cols].head()
+    recent_rounds = round_df.sort_values('date', ascending=False)[table_cols]
 
-    recent_rounds_table = dbc.Table.from_dataframe(
-        recent_rounds,
-        striped=True,
-        bordered=True,
-        hover=True
-    )
+    recent_rounds_table = generate_rounds_table(recent_rounds)
 
 
     return (f'{rounds_played}',
