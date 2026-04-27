@@ -15,7 +15,7 @@ from src.app.dashboard_logic import create_page_header, create_stat_card
 from src.app.base_graphs import performance_radar_chart
 
 
-def render_page3(df: pd.DataFrame,
+def render_page3(round_df: pd.DataFrame,
                  avg_performance_metrics: pd.DataFrame
                  ) -> dbc.Container:
 
@@ -29,7 +29,7 @@ def render_page3(df: pd.DataFrame,
     via the update_output callback when the dropdown selection changes.
 
     Parameters:
-        df (pd.DataFrame): Course-level summary data. Must contain a 'course'
+        round_df (pd.DataFrame): round-level summary data. Must contain a 'course'
             column used to populate the dropdown options.
         avg_performance_metrics (pd.Series): Pre-computed overall average
             performance values indexed by metric name (e.g. Driving, Irons,
@@ -55,8 +55,16 @@ def render_page3(df: pd.DataFrame,
 
     """
 
+    items = round_df['course'].sort_values().unique().tolist()
 
-    items = df['course'].sort_values().unique().tolist()
+    round_df = round_df.loc[round_df['course'] == items[0]]
+
+    # Prepare data for table of recent rounds
+    table_cols = [ 'date', 'year', 'format', 'holes_played',
+       'score', 'over_par',]
+
+    #need to sort by date to show last 5 rounds
+    recent_rounds = round_df.sort_values('date', ascending=False)[table_cols].head()
 
     # this needs work....
     initial_fig = performance_radar_chart(avg_performance_metrics)
@@ -129,7 +137,18 @@ def render_page3(df: pd.DataFrame,
                                         config={'displayModeBar': False},
                                         )],
                                         width=6),
-                                dbc.Col([ html.Div("Your other content here") ], width=6),
+                                dbc.Col(
+                                    html.Div(
+                                        dbc.Table.from_dataframe(
+                                            recent_rounds,
+                                            #striped=True,
+                                            bordered=True,
+                                            hover=True),
+                                        id='recent-rounds-table',
+                                        style={'marginTop': '40px'},
+                                    ),
+                                width=6,
+                                ),
                             ])
 
                         ])
@@ -147,6 +166,7 @@ def render_page3(df: pd.DataFrame,
     Output('worst-score', 'children'),
     Output('course-ranking', 'children'),
     Output('performance-radar', 'figure'),
+    Output('recent-rounds-table', 'children'),
     Input('demo-dropdown', 'value'),
     State('course-data', 'data'),
     State('performance-store', 'data'),
@@ -225,10 +245,18 @@ def update_output(course_name, course_data, performance_data, avg_performance_da
        'score', 'over_par',]
 
     #need to sort by date to show last 5 rounds
-    print(round_df.sort_values('date', ascending=False)[table_cols].head())
+    recent_rounds = round_df.sort_values('date', ascending=False)[table_cols].head()
+
+    recent_rounds_table = dbc.Table.from_dataframe(
+        recent_rounds,
+        striped=True,
+        bordered=True,
+        hover=True
+    )
+
 
     return (f'{rounds_played}',
             f'{avg_score:.0f}',
             f'{avg_score_vs_par:+.1f}',
             f'{best_score}', f'{worst_score}', f'{course_ranking}',
-            output_fig)
+            output_fig, recent_rounds_table)
