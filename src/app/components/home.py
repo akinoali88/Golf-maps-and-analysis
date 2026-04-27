@@ -11,7 +11,7 @@ from dash import dcc, html, callback, Input, Output
 from src.app.dashboard_logic import create_page_header, create_course_badges, get_top_bottom_courses
 from src.app.base_graphs import map_golf_courses
 
-def render_home_tab(df: pd.DataFrame) -> dbc.Container:
+def render_home_tab(course_df: pd.DataFrame) -> dbc.Container:
 
     """
     Constructs the primary dashboard layout for the 'Home' tab.
@@ -21,7 +21,7 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
         and the geographic map of golf courses.
 
         Args:
-            df (pd.DataFrame): The processed golf dataset. Must contain 'number_of_rounds' 
+            course_df (pd.DataFrame): The processed golf dataset. Must contain 'number_of_rounds' 
                 and columns required by 'map_golf_courses' and 'get_top_bottom_courses'.
 
         Returns:
@@ -38,12 +38,12 @@ def render_home_tab(df: pd.DataFrame) -> dbc.Container:
 
     """
 
-    initial_fig = map_golf_courses(df)
+    initial_fig = map_golf_courses(course_df)
 
-    rounds = df['number_of_rounds'].sum()
+    rounds = course_df['number_of_rounds'].sum()
 
-    top_courses = get_top_bottom_courses(df, top=True)
-    bottom_courses = get_top_bottom_courses(df, top=False)
+    top_courses = get_top_bottom_courses(course_df, top=True)
+    bottom_courses = get_top_bottom_courses(course_df, top=False)
 
     return dbc.Container([
             # Header Section
