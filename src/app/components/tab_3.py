@@ -60,7 +60,7 @@ def render_page3(round_df: pd.DataFrame,
     round_df = round_df.loc[round_df['course'] == items[0]]
 
     # Prepare data for table of recent rounds
-    table_cols = [ 'date', 'year', 'format', 'holes_played',
+    table_cols = [ 'date', 'format', 'holes_played',
        'score', 'over_par',]
 
     #need to sort by date to show last 5 rounds
@@ -237,7 +237,7 @@ def update_output(course_name, course_data, performance_data, avg_performance_da
     output_fig = performance_radar_chart(avg_performance_metrics, course_metrics, course_name)
 
     # Prepare data for table of recent rounds
-    table_cols = [ 'date', 'year', 'format', 'holes_played',
+    table_cols = [ 'date', 'format', 'holes_played',
        'score', 'over_par',]
 
     #need to sort by date to show last 5 rounds

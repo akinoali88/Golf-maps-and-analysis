@@ -222,18 +222,39 @@ def generate_rounds_table(round_df: pd.DataFrame) -> dash_table.DataTable | dbc.
         round_df (pd.DataFrame): A DataFrame containing golf round data.
     Returns:
         dash_table.DataTable | dbc.Table: A styled table component.
-        
+
     """
 
+    # Format for display only - keeps original df unchanged
+    display_df = round_df.copy()
+    display_df['date'] = display_df['date'].dt.strftime('%d %b %Y')
+    display_df.columns = [col.replace('_', ' ').title() for col in display_df.columns]
+
+    # Define column widths and right-align score-related columns
+    n_cols = len(display_df.columns)
+    col_width = f'{100 / n_cols}%'
+    right_cols = list(display_df.columns[-4:])
+
     return dbc.Table([
-            html.Thead(
-                html.Tr([
-                    html.Th(col, style={'backgroundColor': '#3e6791', 'color': 'white'})
-                    for col in round_df.columns
-                ])
-            ),
-            html.Tbody([
-                html.Tr([html.Td(row[col]) for col in round_df.columns])
-                for _, row in round_df.iterrows()
+        html.Thead(
+            html.Tr([
+                html.Th(col, style={
+                    'backgroundColor': '#3e6791',
+                    'color': 'white',
+                    'width': col_width,
+                    'textAlign': 'center' if col in right_cols else 'left',
+                })
+                for col in display_df.columns
             ])
-        ], striped=True, bordered=True, hover=True)
+        ),
+        html.Tbody([
+            html.Tr([
+                html.Td(row[col], style={
+                    'width': col_width,
+                    'textAlign': 'center' if col in right_cols else 'left',
+                })
+                for col in display_df.columns
+            ])
+            for _, row in display_df.iterrows()
+        ])
+    ], striped=True, bordered=True, hover=True)
