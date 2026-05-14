@@ -40,9 +40,9 @@ An end-to-end Python application that ingests personal golf scorecard data, enri
 
 ## 🎯 Project Objective
 
-The primary goal of this project is to demonstrate a **production-grade Python workflow** applied to personal sports analytics. It serves as a blueprint for an end-to-end process: taking raw, manually logged scorecard data through a structured ETL pipeline — leveraging Object-Oriented Programming (OOP), external API enrichment, and Pydantic validation — and delivering actionable insights via an interactive web dashboard.
+The primary goal of this project is to demonstrate a **production-grade Python workflow** applied to personal sports analytics. It serves as a blueprint for an end-to-end process: taking raw, manually logged scorecard data through a structured ETL pipeline — leveraging functional programming, external API enrichment, and Pydantic validation — and delivering actionable insights via an interactive web dashboard.
 
-For any golfer who wants to move beyond the scorecard and understand *whether they're actually improving*, this project surfaces the data to answer that question.
+This data from this project is based on data the author has collected over the last 10 years. 
 
 ## ⚙️ The Data Pipeline
 
@@ -286,8 +286,8 @@ A chronological view of scoring progression, designed to answer the key question
 
 A granular breakdown of performance at a specific course, selectable via a dropdown.
 
-* **Skill radar / bar chart:** Average performance ratings across five dimensions — Driving, Irons, Inside 100 Yards, Chipping, and Putting — for all rounds at the selected course
-* **Round history table:** Full log of every round played at the selected course, including date, score, over par, and all skill ratings with qualitative comments
+* **Skill radar / bar chart:** Average performance ratings across five dimensions — Driving, Irons, Inside 100 Yards, Chipping, and Putting — for all rounds at the selected course versus the average across all courses
+* **Round history table:** Full log of every round played at the selected course, including date, score, over par
 * **Course-adjusted benchmarking:** Scores are normalised relative to course par and difficulty adjustment, enabling fair comparison across different venues
 
 ## 🛠️ Requirements

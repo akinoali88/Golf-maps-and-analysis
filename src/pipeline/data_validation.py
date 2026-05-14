@@ -30,6 +30,8 @@ def validate_data(df: pd.DataFrame,
 
     Args:
         df (pd.DataFrame): The raw input data loaded from the source.
+        basemodel (Type[T]): A Pydantic BaseModel class that defines the expected schema
+            structure, field types, and validation rules for the data.
 
     Returns:
         Tuple:
@@ -62,7 +64,7 @@ def validate_data(df: pd.DataFrame,
 
             # Format the message for a single error, separated by new lines
             details = "\n".join(
-                f"{i}) {err["loc"][0]}: {err["msg"]}"
+                f"{i}) {err['loc'][0]}: {err['msg']}"
                 for i, err in enumerate(e.errors(), 1)
                 )
 
