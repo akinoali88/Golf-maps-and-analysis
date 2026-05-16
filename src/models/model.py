@@ -63,7 +63,7 @@ FR_POSTCODE_REGEX = r"^\d{5}$"
 
 class GolfCourse(BaseModel):
 
-    '''Class representing feeding data for a child'''
+    '''Class representing golf course critical data'''
 
     model_config = ConfigDict(
         alias_generator=snake_to_space_title,
@@ -155,7 +155,7 @@ class GolfCourse(BaseModel):
 class GolfRounds(BaseModel):
 
     """
-    Class to capture key round date. 
+    Class to capture key round data. 
     Extras are allowed to capture performance indicators and these
     will be validated with an additional basemodel for performance
     """
