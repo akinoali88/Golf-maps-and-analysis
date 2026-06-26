@@ -4,6 +4,8 @@
 
 **A production-grade ETL pipeline and interactive Dash application for personal golf performance tracking and analysis.**
 
+https://github.com/user-attachments/assets/14668514-179c-4ae1-b780-aef8bd89b36f
+
 An end-to-end Python application that ingests personal golf scorecard data, enriches it with geolocation via the Google Maps API, validates it through Pydantic schemas, and delivers actionable performance insights through an interactive web dashboard — including an interactive map of every course played.
 
 - [⛳ Golf Maps \& Analysis: End-to-End Data Pipeline](#-golf-maps--analysis-end-to-end-data-pipeline)
